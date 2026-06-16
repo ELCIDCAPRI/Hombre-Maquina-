@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Pastelería de Bodas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="catalogo.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+            <div class="container-fluid px-4 px-md-5">
+                
+                <a class="navbar-brand nav-logo text-decoration-none" href="#">
+                    <span>TALLER DE SABORES</span>
+                    <em>PASTELES DE BODA · LIMA</em>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Menú de navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
+                        <li class="nav-item"><a class="nav-link active" href="../main/index.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#catalogo">Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Personalizacion/personalizacion.html">Personalización</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Nosotros/nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Contacto/contacto.html">Contacto</a></li>
+                    </ul>
+
+                    <div class="nav-right d-flex align-items-center gap-4 mt-3 mt-lg-0 pb-3 pb-lg-0">
+                        
+                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="toggleCart()">
+                            <span class="fs-4">🛒</span>
+                            <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
+                        </button>
+
+                        <button class="nav-cta rounded-0" onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
+                            <a href="../Personalizacion/personalizacion.html">PERSONALIZAR</a>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container py-5">
+        <h1 class="text-center mb-5 wedding-title">Catálogo de Bodas</h1>
+
+        <div class="row mb-5 justify-content-center g-3 filters-section">
+            <div class="col-12 col-md-auto">
+                <select class="form-select shadow-sm" id="filter-estilo">
+                    <option value="all">Estilo (Todos)</option>
+                    <option value="clasico">Clásico</option>
+                    <option value="rustico">Rústico / Boho</option>
+                    <option value="moderno">Moderno</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-auto">
+                <select class="form-select shadow-sm" id="filter-tamano">
+                    <option value="all">Tamaño (Todos)</option>
+                    <option value="pequeno">2 Pisos</option>
+                    <option value="mediano">3 Pisos</option>
+                    <option value="grande">4+ Pisos</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-auto">
+                <select class="form-select shadow-sm" id="filter-precio">
+                    <option value="all">Rango de precio</option>
+                    <option value="low">Hasta S/ 500</option>
+                    <option value="mid">S/ 500 - S/ 1000</option>
+                    <option value="high">Más de S/ 1000</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4" id="catalog-grid"></div>
+    </div>
+
+    <footer class="text-center py-4 mt-5 border-top">
+        <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="catalogo.js"></script>
+</body>
+</html>

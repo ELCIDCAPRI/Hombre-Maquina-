@@ -1,0 +1,257 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --cream:#fdf8f2;
+  --cream2:#f5ede0;
+  --rose:#f4cdd4;
+  --gold:#c9a97a;
+  --brown:#4a3728;
+  --muted:#9c8470;
+  --white:#ffffff;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:var(--cream);
+  color:var(--brown);
+  font-family:'Jost',sans-serif;
+  overflow-x:hidden;
+}
+
+/* Variables de color basadas en tu imagen */
+:root {
+    --gold: #bda57b; /* Tono dorado/crema oscuro */
+    --brown: #4d3e35; /* Tono marrón oscuro del botón */
+    --muted: #9e9086; /* Tono de los enlaces inactivos */
+    --nav-bg: rgba(253, 248, 242, 0.98); /* Fondo crema claro */
+}
+
+/* Espacio superior para que el navbar fijo no tape el contenido */
+body {
+    padding-top: 70px; 
+}
+
+/* Estructura principal del Nav */
+.custom-navbar {
+    background: var(--nav-bg);
+    border-bottom: 1px solid #f0e9df;
+    min-height: 64px;
+    transition: all 0.3s ease;
+}
+
+/* Tipografía y diseño del Logo */
+.nav-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.nav-logo span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    letter-spacing: 3px;
+    color: var(--brown);
+}
+
+.nav-logo em {
+    font-style: italic;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+/* Estilos de los Enlaces */
+.nav-links .nav-link {
+    color: var(--muted) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links .nav-link:hover,
+.nav-links .nav-link.active {
+    color: var(--gold) !important;
+}
+
+/* Ajustes del Carrito */
+.cart-btn {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.cart-btn:hover {
+    transform: scale(1.05);
+}
+
+.cart-count {
+    top: -5px;
+    right: -10px;
+    background-color: var(--gold);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--nav-bg); /* Crea el efecto de separación */
+}
+
+/* Botón CTA (Personalizar) */
+.nav-cta {
+    background-color: var(--brown);
+    color: white;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    border: 1px solid var(--brown);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover {
+    background-color: transparent;
+    color: var(--brown);
+}
+
+.nav-cta a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.nav-cta:hover a {
+    color: var(--brown);
+}
+
+.wedding-title {
+    font-family: 'Playfair Display', serif;
+    color: #b58c49; /* Tono dorado/bronce elegante */
+    font-size: 3rem;
+    letter-spacing: 1.5px;
+}
+
+.filters-section .form-select {
+    border: 1px solid #eaeaea;
+    border-radius: 0;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.filters-section .form-select:focus {
+    border-color: #b58c49;
+    box-shadow: 0 0 0 0.25rem rgba(181, 140, 73, 0.25);
+}
+
+/* --- CUSTOMIZER: LÍNEA DE PASOS --- */
+.step-line {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background-color: #f0e9df;
+    z-index: 1;
+}
+
+.step-indicator {
+    position: relative;
+    z-index: 2;
+    background: #ffffff;
+    padding: 8px 24px;
+    border-radius: 30px;
+    border: 2px solid #f0e9df;
+    color: var(--muted);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.step-indicator.active {
+    border-color: var(--gold);
+    color: var(--brown);
+    background-color: #fcfcfc;
+    box-shadow: 0 4px 10px rgba(189, 165, 123, 0.15);
+}
+
+/* --- CUSTOMIZER: TARJETAS DE OPCIÓN --- */
+.option-card {
+    border: 1px solid #e2dcd5;
+    border-radius: 8px;
+    padding: 16px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.option-card:hover {
+    border-color: var(--gold);
+    background-color: #fcfaf8;
+}
+
+.option-card.active {
+    border-color: var(--brown);
+    background-color: var(--brown);
+    color: #ffffff;
+}
+
+.option-card.active .text-muted {
+    color: #d1c8c0 !important;
+}
+
+/* --- CUSTOMIZER: EL PASTEL 3D --- */
+.cake-visual-container {
+    height: 300px; /* Altura fija para que no salte el contenido */
+}
+
+/* --- CUSTOMIZER: EL PASTEL 3D (ACTUALIZADO) --- */
+#cake-tiers {
+    /* Colores por defecto (Vainilla) */
+    --cake-color-edge: #e8dfd3;
+    --cake-color-light: #ffffff;
+    --cake-color-dark: #d8caba;
+}
+
+.cake-tier {
+    /* Usamos las variables para el degradado cilíndrico */
+    background: linear-gradient(
+        to right, 
+        var(--cake-color-edge) 0%, 
+        var(--cake-color-light) 30%, 
+        var(--cake-color-light) 70%, 
+        var(--cake-color-dark) 100%
+    );
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    margin-bottom: -2px; 
+    /* Transición suave para cuando cambie el color */
+    transition: all 0.5s ease; 
+}
+
+/* Base elegante del pastel (Cake Stand) */
+.cake-stand {
+    width: 220px;
+    height: 12px;
+    background: linear-gradient(to right, #a38c64 0%, #bda57b 50%, #a38c64 100%);
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    z-index: 5;
+}
+
+.cake-stand-base {
+    width: 90px;
+    height: 20px;
+    background: linear-gradient(to right, #8c7753 0%, #a38c64 50%, #8c7753 100%);
+    border-radius: 0 0 10px 10px;
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Pastelería de Bodas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="nosotros.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+            <div class="container-fluid px-4 px-md-5">
+                
+                <a class="navbar-brand nav-logo text-decoration-none" href="#">
+                    <span>TALLER DE SABORES</span>
+                    <em>PASTELES DE BODA · LIMA</em>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Menú de navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
+                        <li class="nav-item"><a class="nav-link active" href="../main/index.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Catalogo/catalogo.html">Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Personalizacion/personalizacion.html">Personalización</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Contacto/contacto.html">Contacto</a></li>
+                    </ul>
+
+                    <div class="nav-right d-flex align-items-center gap-4 mt-3 mt-lg-0 pb-3 pb-lg-0">
+                        
+                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="toggleCart()">
+                            <span class="fs-4">🛒</span>
+                            <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
+                        </button>
+
+                        <button class="nav-cta rounded-0"  onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
+                            <a href="../Personalizacion/personalizacion.html">PERSONALIZAR</a>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="nosotros" class="py-5 position-relative bg-white">
+        <div class="container my-5">
+            <div class="row align-items-center g-5">
+                
+                <div class="col-12 col-lg-6 position-relative">
+                    <div class="about-img-wrapper shadow-sm">
+                        <img src="../Nosotros/imgs/ChefNosotros.jpg" alt="Detalle de decoración en Taller de Sabores" class="img-fluid w-100">
+                    </div>
+                    
+                    <div class="experience-badge shadow-lg text-center p-4 bg-white">
+                        <span class="d-block experience-number text-gold">8+</span>
+                        <span class="d-block text-muted mt-1" style="font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Años creando<br>memorias</span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6 ps-lg-5">
+                    <span class="subtitle-featured">Nuestra Historia</span>
+                    <h2 class="title-featured mt-2 mb-4">Arte azucarado con esencia peruana</h2>
+                    
+                    <p class="text-muted mb-4" style="line-height: 1.8; font-size: 1.05rem;">
+                        Desde nuestros inicios en Lima en 2018, en <strong>Taller de Sabores</strong> nos propusimos una misión clara: transformar el momento más dulce de tu boda en una obra de arte comestible. No solo horneamos pasteles; diseñamos experiencias que reflejan la esencia de cada pareja.
+                    </p>
+                    
+                    <p class="text-muted mb-5" style="line-height: 1.8; font-size: 1.05rem;">
+                        Cada detalle, desde el batido del merengue suizo hasta la última flor de azúcar colocada a mano, es realizado con pasión, precisión y una cuidadosa selección de ingredientes locales de primera calidad.
+                    </p>
+                    
+                    <div class="row g-4 border-top pt-4 divider-subtle">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box">🍰</div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--brown); font-family: 'Playfair Display', serif; font-size: 1.1rem;">Diseño Único</h6>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box">✨</div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--brown); font-family: 'Playfair Display', serif; font-size: 1.1rem;">Calidad Premium</h6>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box">🌿</div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--brown); font-family: 'Playfair Display', serif; font-size: 1.1rem;">Insumos Frescos</h6>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-box">💍</div>
+                                <h6 class="mb-0 fw-bold" style="color: var(--brown); font-family: 'Playfair Display', serif; font-size: 1.1rem;">Asesoría Personal</h6>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center py-4 mt-5 border-top">
+        <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="nosotros.js"></script>
+</body>
+</html>
