@@ -6,7 +6,45 @@
     <title>Catálogo - Pastelería de Bodas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="contacto.css">
+    
+    <style>
+        /* Animación y estilo personalizado para los logos de redes sociales */
+        .social-icon-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #fdf8f2;
+            color: #8d6e63; /* Color marrón base */
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Efecto de animación al pasar el mouse (Hover) */
+        .social-icon-link:hover {
+            transform: scale(1.15) translateY(-3px);
+            color: #ffffff;
+        }
+
+        /* Colores específicos de marca en hover */
+        .social-icon-link.instagram:hover {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        .social-icon-link.facebook:hover {
+            background-color: #1877f2;
+        }
+
+        .social-icon-link.tiktok:hover {
+            background-color: #000000;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -81,10 +119,17 @@
                         </ul>
 
                         <h5 class="mb-3 fs-6" style="font-family: 'Cormorant Garamond', serif; color: var(--gold); text-transform: uppercase; letter-spacing: 2px;">Síguenos</h5>
+                        
                         <div class="d-flex gap-3">
-                            <a href="#" class="social-icon">IG</a>
-                            <a href="#" class="social-icon">FB</a>
-                            <a href="#" class="social-icon">TT</a>
+                            <a href="https://www.instagram.com/tiendapasteleria/" target="_blank" class="social-icon-link instagram" title="Síguenos en Instagram">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/laDulce.peru/" target="_blank" class="social-icon-link facebook" title="Síguenos en Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@pastelerias_lima" target="_blank" class="social-icon-link tiktok" title="Síguenos en TikTok">
+                                <i class="fa-brands fa-tiktok"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
