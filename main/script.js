@@ -13,7 +13,7 @@ const tortasDestacadas = [
         id: "d2",
         nombre: "Romance Rústico",
         descripcion: "Estilo rústico semi-naked decorado con delicadas flores de estación naturales.",
-        imagen: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&q=80&w=600"
+        imagen: "../main/img/romanceRusti.jpeg"
     },
     {
         id: "d3",

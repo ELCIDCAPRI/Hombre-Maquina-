@@ -16,7 +16,7 @@ const cakes = [
         price: 380.00,
         style: "rustico",
         size: "pequeno",
-        image: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&q=80&w=600"
+        image: "../Catalogo/img/romanceRusti.jpeg"
     },
     {
         id: 3,
