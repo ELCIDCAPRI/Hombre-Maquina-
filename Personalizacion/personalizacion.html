@@ -3,231 +3,273 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Taller de Sabores — Pasteles de Boda</title>
-
-  <!-- Google Fonts -->
+  <title>Taller de Sabores — Personaliza tu Torta de Boda</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="stylesheet" href="personalizacion.css">
+  <link rel="stylesheet" href="../shared/accessibility.css">
 </head>
-
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
-            <div class="container-fluid px-4 px-md-5">
-                
-                <a class="navbar-brand nav-logo text-decoration-none" href="#">
-                    <span>TALLER DE SABORES</span>
-                    <em>PASTELES DE BODA · LIMA</em>
-                </a>
+  <a href="#personalizacion" class="skip-link">Saltar al contenido principal</a>
 
-                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Menú de navegación">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+  <header role="banner">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar" aria-label="Navegación principal">
+      <div class="container-fluid px-4 px-md-5">
+        <a class="navbar-brand nav-logo text-decoration-none" href="../main/index.html" aria-label="Taller de Sabores - Inicio">
+          <span>TALLER DE SABORES</span>
+          <em>PASTELES DE BODA · LIMA</em>
+        </a>
 
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
-                        <li class="nav-item"><a class="nav-link active" href="../main/index.html">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Catalogo/catalogo.html">Catálogo</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#personalizacion">Personalización</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Nosotros/nosotros.html">Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Contacto/contacto.html">Contacto</a></li>
-                    </ul>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Abrir menú de navegación">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-                    <div class="nav-right d-flex align-items-center gap-4 mt-3 mt-lg-0 pb-3 pb-lg-0">
-                        
-                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="toggleCart()">
-                            <span class="fs-4">🛒</span>
-                            <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
-                        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
+            <li class="nav-item"><a class="nav-link" href="../main/index.html">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="../Catalogo/catalogo.html">Catálogo</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="../Personalizacion/personalizacion.html">Personalización</a></li>
+            <li class="nav-item"><a class="nav-link" href="../Nosotros/nosotros.html">Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" href="../Contacto/contacto.html">Contacto</a></li>
+          </ul>
 
-                        <button class="nav-cta rounded-0"  onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
-                            <a href="/Personalizacion/personalizacion.html">PERSONALIZAR</a>
-                        </button>
-                        
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+          <div class="nav-right d-flex align-items-center gap-3 mt-3 mt-lg-0 pb-3 pb-lg-0">
 
-    <section id="personalizacion" class="cake-customizer py-5" style="background-color: var(--nav-bg, #fdf8f2);">
-        <div class="container my-5">
-            
-            <div class="text-center mb-5">
-                <h2 class="title-featured">Diseña tu Torta</h2>
-                <div class="divider-gold mx-auto mt-3"></div>
+            <button class="auth-btn bg-transparent border-0 p-1 auth-logged-out" onclick="Auth.openModal()" aria-label="Iniciar sesión o registrarse" title="Iniciar sesión">
+              <span class="fs-5" style="line-height: 1;">👤</span>
+            </button>
+
+            <div class="auth-logged-in d-none align-items-center gap-2">
+              <span class="auth-user-name text-muted" style="font-size: 0.8rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+              <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Panel de administración" title="Admin">
+                <span class="fs-6" style="line-height: 1;">⚙️</span>
+              </button>
+              <button class="auth-btn bg-transparent border-0 p-1" onclick="Auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <span class="fs-6" style="line-height: 1;">🚪</span>
+              </button>
             </div>
 
-            <div class="row justify-content-center mb-5">
-                <div class="col-12 col-md-8 d-flex justify-content-between position-relative">
-                    <div class="step-line"></div>
-                    <div class="step-indicator active" id="indicator-1">1. Pisos</div>
-                    <div class="step-indicator" id="indicator-2">2. Sabores</div>
-                    <div class="step-indicator" id="indicator-3">3. Decoración</div>
-                </div>
-            </div>
+            <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()" aria-label="Abrir carrito de compras">
+              <span class="fs-4">🛒</span>
+              <span class="cart-count position-absolute rounded-pill" id="cartCount" aria-live="polite" aria-label="0 productos en el carrito">0</span>
+            </button>
 
-            <div class="row g-4">
-                
-                <div class="col-12 col-lg-4">
-                    <div class="preview-panel p-4 bg-white shadow-sm h-100 rounded-3 border">
-                        <h4 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: var(--brown);">Vista Previa</h4>
-                        
-                        <div class="cake-visual-container d-flex flex-column align-items-center justify-content-end mb-4">
-                            <div id="cake-tiers" class="d-flex flex-column align-items-center">
-                                </div>
-                            <div class="cake-stand"></div>
-                            <div class="cake-stand-base"></div>
-                        </div>
+            <button class="nav-cta rounded-0">
+              <a href="../Personalizacion/personalizacion.html">PERSONALIZAR</a>
+            </button>
 
-                        <div class="preview-details text-muted" style="font-size: 0.9rem;">
-                            <p class="mb-1"><strong>Pisos:</strong> <span id="prev-pisos">2 pisos</span></p>
-                            <p class="mb-1"><strong>Sabor:</strong> <span id="prev-sabor">Por definir</span></p>
-                            <p class="mb-1"><strong>Relleno:</strong> <span id="prev-relleno">Por definir</span></p>
-                            <p class="mb-0"><strong>Decoración:</strong> <span id="prev-decoracion">Por definir</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-5">
-                    <div class="options-panel h-100">
-                        
-                        <div id="step-1" class="step-section">
-                            <h4 class="mb-4 text-center" style="color: var(--brown);">Selecciona el tamaño</h4>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="option-card active" onclick="selectFloor(2, 150, this)">
-                                        <h5 class="mb-1">2 Pisos (Petite)</h5>
-                                        <small class="text-muted">Ideal para 20-30 personas (+ S/ 150)</small>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectFloor(3, 250, this)">
-                                        <h5 class="mb-1">3 Pisos (Estándar)</h5>
-                                        <small class="text-muted">Ideal para 40-60 personas (+ S/ 250)</small>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectFloor(4, 380, this)">
-                                        <h5 class="mb-1">4 Pisos (Gala)</h5>
-                                        <small class="text-muted">Ideal para 70-100 personas (+ S/ 380)</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="step-2" class="step-section d-none">
-                            <h4 class="mb-4 text-center" style="color: var(--brown);">Sabor y Relleno</h4>
-                            <label class="form-label text-muted small">Bizcocho</label>
-                            <div class="row g-3 mb-4">
-                                <div class="col-6">
-                                    <div class="option-card" onclick="selectFlavor('Vainilla', 0, this)">Vainilla</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="option-card" onclick="selectFlavor('Chocolate', 20, this)">Chocolate (+ S/20)</div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectFlavor('Red Velvet', 35, this)">Red Velvet (+ S/35)</div>
-                                </div>
-                            </div>
-
-                            <label class="form-label text-muted small">Relleno principal</label>
-                            <select class="form-select custom-input" id="select-relleno" onchange="selectFill(this)">
-                                <option value="0" selected disabled>Selecciona un relleno...</option>
-                                <option value="0|Manjar Blanco">Manjar Blanco (Sin costo adicional)</option>
-                                <option value="25|Ganache de Chocolate">Ganache de Chocolate (+ S/25)</option>
-                                <option value="30|Frutos Rojos">Frutos Rojos (+ S/30)</option>
-                            </select>
-                        </div>
-
-                        <div id="step-3" class="step-section d-none">
-                            <h4 class="mb-4 text-center" style="color: var(--brown);">Estilo de Decoración</h4>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectDeco('Minimalista', 0, this)">
-                                        <h5 class="mb-1">Clásica / Minimalista</h5>
-                                        <small class="text-muted">Acabado liso, sin costo adicional.</small>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectDeco('Flores Naturales', 80, this)">
-                                        <h5 class="mb-1">Romántica Floral</h5>
-                                        <small class="text-muted">Arreglos con flores de estación (+ S/ 80)</small>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="option-card" onclick="selectDeco('Pan de Oro y Texturas', 120, this)">
-                                        <h5 class="mb-1">Lujo Moderno</h5>
-                                        <small class="text-muted">Detalles en oro 24k y marmoleado (+ S/ 120)</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-3">
-                    <div class="summary-panel p-4 bg-white shadow-sm h-100 rounded-3 border d-flex flex-column">
-                        <h4 class="mb-4" style="font-family: 'Playfair Display', serif; color: var(--brown);">Resumen</h4>
-                        
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted small">Pisos</span>
-                            <strong id="sum-pisos">S/ 150.00</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted small">Bizcocho</span>
-                            <strong id="sum-sabor">S/ 0.00</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted small">Relleno</span>
-                            <strong id="sum-relleno">S/ 0.00</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-                            <span class="text-muted small">Decoración</span>
-                            <strong id="sum-decoracion">S/ 0.00</strong>
-                        </div>
-
-                        <div class="mt-auto pt-4">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <span class="text-uppercase" style="letter-spacing: 1px;">Total</span>
-                                <h3 id="sum-total" style="color: var(--gold); font-family: 'Playfair Display', serif;">S/ 150.00</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-12 d-flex justify-content-between">
-                    <button class="btn-secondary-custom" id="btn-prev" onclick="changeStep(-1)" style="visibility: hidden;">
-                        ← Anterior
-                    </button>
-                    <button class="btn-primary-custom shadow-sm" id="btn-next" onclick="changeStep(1)">
-                        Siguiente → 
-                    </button>
-                </div>
-            </div>
-
+          </div>
         </div>
-    </section>
+      </div>
+    </nav>
+  </header>
 
-    <!-- TOAST -->
-    <div class="toast" id="toast"></div>
+  <main id="personalizacion" class="cake-customizer py-5" style="background-color: var(--nav-bg, #fdf8f2);" role="main">
+    <div class="container my-5">
+      <div class="text-center mb-5">
+        <h2 class="title-featured">Diseña tu Torta</h2>
+        <div class="divider-gold mx-auto mt-3" role="separator" aria-hidden="true"></div>
+      </div>
 
-    <footer class="text-center py-4 mt-5 border-top">
-        <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
-    </footer>
+      <div class="row justify-content-center mb-5">
+        <div class="col-12 col-md-8 d-flex justify-content-between position-relative" role="tablist" aria-label="Progreso de personalización">
+          <div class="step-line" aria-hidden="true"></div>
+          <div class="step-indicator active" id="indicator-1" role="tab" aria-selected="true" aria-controls="step-1" tabindex="0">1. Pisos</div>
+          <div class="step-indicator" id="indicator-2" role="tab" aria-selected="false" aria-controls="step-2" tabindex="-1">2. Sabores</div>
+          <div class="step-indicator" id="indicator-3" role="tab" aria-selected="false" aria-controls="step-3" tabindex="-1">3. Decoración</div>
+        </div>
+      </div>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="personalizacion.js"></script>
+      <div class="row g-4">
+        <div class="col-12 col-lg-4">
+          <div class="preview-panel p-4 bg-white shadow-sm h-100 rounded-3 border" aria-label="Vista previa de la torta">
+            <h4 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: var(--brown);">Vista Previa</h4>
+            <div id="cake-3d-container" class="cake-visual-container mb-4" style="position:relative;width:100%;height:380px;overflow:hidden;border-radius:12px;background:linear-gradient(180deg,#fdf8f2 0%,#f0e8dd 100%);" aria-label="Vista previa 3D interactiva de la torta">
+              <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.75);backdrop-filter:blur(4px);padding:4px 14px;border-radius:20px;font-size:0.7rem;color:#9c8470;pointer-events:none;z-index:2;white-space:nowrap;">🖱 Arrastra para rotar · Desplaza para zoom</div>
+            </div>
+            <div class="preview-details text-muted" style="font-size: 0.9rem;">
+              <p class="mb-1"><strong>Pisos:</strong> <span id="prev-pisos">2 pisos</span></p>
+              <p class="mb-1"><strong>Sabor:</strong> <span id="prev-sabor">Por definir</span></p>
+              <p class="mb-1"><strong>Relleno:</strong> <span id="prev-relleno">Por definir</span></p>
+              <p class="mb-0"><strong>Decoración:</strong> <span id="prev-decoracion">Por definir</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="options-panel h-100">
+            <div id="step-1" class="step-section" role="tabpanel" aria-labelledby="indicator-1">
+              <h4 class="mb-4 text-center" style="color: var(--brown);">Selecciona el tamaño</h4>
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="option-card active" onclick="selectFloor(2, 150, this)" role="radio" aria-checked="true" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFloor(2,150,this)">
+                    <h5 class="mb-1">2 Pisos (Petite)</h5>
+                    <small class="text-muted">Ideal para 20-30 personas (+ S/ 150)</small>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="option-card" onclick="selectFloor(3, 250, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFloor(3,250,this)">
+                    <h5 class="mb-1">3 Pisos (Estándar)</h5>
+                    <small class="text-muted">Ideal para 40-60 personas (+ S/ 250)</small>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="option-card" onclick="selectFloor(4, 380, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFloor(4,380,this)">
+                    <h5 class="mb-1">4 Pisos (Gala)</h5>
+                    <small class="text-muted">Ideal para 70-100 personas (+ S/ 380)</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="step-2" class="step-section d-none" role="tabpanel" aria-labelledby="indicator-2">
+              <h4 class="mb-4 text-center" style="color: var(--brown);">Sabor y Relleno</h4>
+              <label class="form-label text-muted small" id="label-bizcocho">Bizcocho</label>
+              <div class="row g-3 mb-4" role="radiogroup" aria-labelledby="label-bizcocho">
+                <div class="col-6">
+                  <div class="option-card" onclick="selectFlavor('Vainilla', 0, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFlavor('Vainilla',0,this)">Vainilla</div>
+                </div>
+                <div class="col-6">
+                  <div class="option-card" onclick="selectFlavor('Chocolate', 20, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFlavor('Chocolate',20,this)">Chocolate (+ S/20)</div>
+                </div>
+                <div class="col-12">
+                  <div class="option-card" onclick="selectFlavor('Red Velvet', 35, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectFlavor('Red Velvet',35,this)">Red Velvet (+ S/35)</div>
+                </div>
+              </div>
+
+              <label class="form-label text-muted small" for="select-relleno">Relleno principal</label>
+              <select class="form-select custom-input" id="select-relleno" onchange="selectFill(this)" aria-required="true">
+                <option value="0|Por definir" selected disabled>Selecciona un relleno...</option>
+                <option value="0|Manjar Blanco">Manjar Blanco (Sin costo adicional)</option>
+                <option value="25|Ganache de Chocolate">Ganache de Chocolate (+ S/25)</option>
+                <option value="30|Frutos Rojos">Frutos Rojos (+ S/30)</option>
+              </select>
+            </div>
+
+            <div id="step-3" class="step-section d-none" role="tabpanel" aria-labelledby="indicator-3">
+              <h4 class="mb-4 text-center" style="color: var(--brown);">Estilo de Decoración</h4>
+              <div class="row g-3" role="radiogroup" aria-label="Estilo de decoración">
+                <div class="col-12">
+                  <div class="option-card" onclick="selectDeco('Minimalista', 0, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectDeco('Minimalista',0,this)">
+                    <h5 class="mb-1">Clásica / Minimalista</h5>
+                    <small class="text-muted">Acabado liso, sin costo adicional.</small>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="option-card" onclick="selectDeco('Flores Naturales', 80, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectDeco('Flores Naturales',80,this)">
+                    <h5 class="mb-1">Romántica Floral</h5>
+                    <small class="text-muted">Arreglos con flores de estación (+ S/ 80)</small>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="option-card" onclick="selectDeco('Pan de Oro y Texturas', 120, this)" role="radio" aria-checked="false" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectDeco('Pan de Oro y Texturas',120,this)">
+                    <h5 class="mb-1">Lujo Moderno</h5>
+                    <small class="text-muted">Detalles en oro 24k y marmoleado (+ S/ 120)</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-3">
+          <div class="summary-panel p-4 bg-white shadow-sm h-100 rounded-3 border d-flex flex-column" aria-label="Resumen de cotización">
+            <h4 class="mb-4" style="font-family: 'Playfair Display', serif; color: var(--brown);">Resumen</h4>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2" style="border-color: #f0e9df !important;">
+              <span class="text-muted small">Pisos</span>
+              <strong id="sum-pisos">S/ 150.00</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2" style="border-color: #f0e9df !important;">
+              <span class="text-muted small">Bizcocho</span>
+              <strong id="sum-sabor">S/ 0.00</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2" style="border-color: #f0e9df !important;">
+              <span class="text-muted small">Relleno</span>
+              <strong id="sum-relleno">S/ 0.00</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-2" style="border-color: #f0e9df !important;">
+              <span class="text-muted small">Decoración</span>
+              <strong id="sum-decoracion">S/ 0.00</strong>
+            </div>
+            <div class="mt-auto pt-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="text-uppercase" style="letter-spacing: 1px;">Total</span>
+                <h3 id="sum-total" style="color: var(--gold); font-family: 'Playfair Display', serif;">S/ 150.00</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-12 d-flex justify-content-between">
+          <button class="btn-secondary-custom" id="btn-prev" onclick="changeStep(-1)" style="visibility: hidden;" aria-label="Paso anterior">
+            ← Anterior
+          </button>
+          <button class="btn-primary-custom shadow-sm" id="btn-next" onclick="changeStep(1)" aria-label="Siguiente paso">
+            Siguiente →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-10">
+          <div class="text-center mb-4">
+            <span class="subtitle-featured" style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--gold);">Visítanos</span>
+            <h3 class="title-featured mt-2" style="font-family: 'Cormorant Garamond', serif; color: var(--brown); font-size: 2rem;">Nuestro Estudio</h3>
+            <div class="divider-gold mx-auto mt-3" role="separator" aria-hidden="true"></div>
+          </div>
+          <div class="map-wrapper shadow-sm rounded-3 overflow-hidden">
+            <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-77.048%2C-12.128%2C-77.032%2C-12.115&amp;layer=mapnik&amp;marker=-12.1215%2C-77.040" width="100%" height="280" style="border:0; display:block;" allowfullscreen loading="lazy" title="Mapa de ubicación del estudio en Miraflores, Lima" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+          <p class="text-center text-muted mt-3" style="font-size: 0.85rem;">
+            📍 Miraflores, Lima — Atención exclusiva previa cita
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <footer class="text-center py-4 mt-5 border-top" role="contentinfo">
+    <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- Cart Panel -->
+  <div class="cart-panel-overlay" id="cart-overlay" onclick="Cart.closePanel()" aria-hidden="true"></div>
+  <div class="cart-panel" id="cart-panel" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+    <div class="cart-panel-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="border-color: #f0e9df !important;">
+      <h5 class="mb-0" style="font-family: 'Playfair Display', serif; color: var(--brown);">Tu Carrito</h5>
+      <button class="btn btn-sm border-0" onclick="Cart.closePanel()" aria-label="Cerrar carrito" style="font-size: 1.3rem; color: var(--muted);">&times;</button>
+    </div>
+    <div class="cart-panel-body px-3 py-2" id="cart-items" style="flex: 1; overflow-y: auto;">
+      <div class="cart-empty text-center py-5">
+        <p class="text-muted mb-1">Tu carrito está vacío</p>
+        <small class="text-muted">Explora nuestro catálogo y personaliza tu torta ideal</small>
+      </div>
+    </div>
+    <div class="cart-panel-footer px-4 py-3 border-top" style="border-color: #f0e9df !important;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">Total</span>
+        <strong id="cart-total" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.2rem;">S/ 0.00</strong>
+      </div>
+      <button class="btn-primary-custom w-100 shadow-sm" onclick="Cart.checkout()" aria-label="Realizar pedido">
+        REALIZAR PEDIDO
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../shared/cart.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script src="../shared/accessibility.js"></script>
+  <script src="../shared/cake3d.js"></script>
+  <script src="personalizacion.js"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-// 1. Base de datos simulada (Idealmente esto lo exportas de tu script principal)
 const catalogoTortas = [
     {
         id: "1",
@@ -14,15 +13,15 @@ const catalogoTortas = [
         descripcion: "Naked cake de zanahoria con frosting de queso crema y detalles florales naturales.",
         precio: 382.00,
         imagen: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Chocolate Belga", "Cerezas", "Ganache Oscuro"]
+        sabores: ["Zanahoria", "Queso Crema", "Nueces"]
     },
     {
         id: "3",
         nombre: "Encanto Botánico",
-        descripcion: "Elegante combinación de bizcocho al desnudo y crema texturizada, coronada con un arreglo floral silvestre..",
+        descripcion: "Elegante combinación de bizcocho al desnudo y crema texturizada, coronada con un arreglo floral silvestre.",
         precio: 850.00,
-        imagen: "../img/Botanica.jpg",
-        sabores: ["Zanahoria Especiada", "Queso Crema", "Nueces Tostadas"]
+        imagen: "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Vainilla", "Crema Floral", "Frutos del Bosque"]
     },
     {
         id: "4",
@@ -37,43 +36,86 @@ const catalogoTortas = [
         nombre: "Boho Dulzura",
         descripcion: "Un diseño rústico de cuatro pisos con acabado semi-naked y drip cake. Su toque distintivo y cálido lo aportan las mini donas espolvoreadas y las ramas de eucalipto fresco.",
         precio: 480.00,
-        imagen: "../img/BohoDulzura.jpg",
-        sabores: ["Vainilla con Canela", "Manjar", "Canela"]
+        imagen: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Vainilla", "Manjar", "Canela"]
     },
     {
         id: "6",
         nombre: "Ilusión Floral",
         descripcion: "Diseño de vanguardia con efecto flotante. Destaca por su cámara central transparente que encapsula lirios blancos, contrastando con la pureza del acabado liso y bordes de perlas.",
         precio: 650.00,
-        imagen: "../img/IlusionFloral.jpg",
-        sabores: ["Limón", "Almendras", "Ganache de Maracuyá"]
+        imagen: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Limón", "Almendras", "Maracuyá"]
     },
-    // ... Agrega el resto de tus tortas aquí
+    {
+        id: "7",
+        nombre: "Delicia de Chocolate",
+        descripcion: "Pastel de chocolate belga con relleno de ganache oscuro y frambuesas frescas. Cobertura de espejo brillante con decoración en oro comestible.",
+        precio: 890.00,
+        imagen: "https://images.unsplash.com/photo-1562777717-dc6984f65a63?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Chocolate Belga", "Ganache", "Frambuesa"]
+    },
+    {
+        id: "8",
+        nombre: "Primavera Floral",
+        descripcion: "Pastel primaveral de 3 pisos con buttercream de vainilla y flores frescas de estación.",
+        precio: 560.00,
+        imagen: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Vainilla", "Limón", "Arándanos"]
+    },
+    {
+        id: "9",
+        nombre: "Lujo Dorado",
+        descripcion: "Espectacular pastel con aplicaciones de pan de oro 24k, perlas comestibles y flores de azúcar hiperrealistas.",
+        precio: 2500.00,
+        imagen: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Vainilla", "Dulce de Leche", "Oro Comestible"]
+    },
+    {
+        id: "10",
+        nombre: "Mini Aventura",
+        descripcion: "Pastel pequeño de 2 pisos con diseño geométrico moderno. Relleno de crema de maracuyá y mango. Perfecto para bodas íntimas.",
+        precio: 290.00,
+        imagen: "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Maracuyá", "Mango", "Crema Ligera"]
+    },
+    {
+        id: "11",
+        nombre: "Bosque Encantado",
+        descripcion: "Pastel temático con aspecto de tronco de árbol, decorado con hongos de merengue, musgo comestible y flores del bosque.",
+        precio: 1100.00,
+        imagen: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Chocolate", "Avellanas", "Merengue"]
+    },
+    {
+        id: "12",
+        nombre: "Marfil Atemporal",
+        descripcion: "Diseño clásico de 4 pisos con encaje real comestible, perlas y delicadas flores en pasta de goma.",
+        precio: 1800.00,
+        imagen: "https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&q=80&w=600",
+        sabores: ["Vainilla", "Crema de Mantequilla", "Flor de Azahar"]
+    }
 ];
 
-// Reseñas simuladas (Podrías asociarlas por ID en un proyecto más grande)
 const reseñasDemo = [
-    { nombre: "María F.", texto: "¡Absolutamente delicioso y hermoso!", estrellas: "★ ★ ★ ★ ★" },
+    { nombre: "María F.", texto: "¡Absolutamente delicioso y hermoso! Superó todas nuestras expectativas.", estrellas: "★ ★ ★ ★ ★" },
     { nombre: "Carlos R.", texto: "La torta superó nuestras expectativas. El sabor y la decoración fueron perfectos para nuestra boda.", estrellas: "★ ★ ★ ★ ★" },
-    { nombre: "Lucía P.", texto: "Excelente servicio y una torta espectacular. Todos nuestros invitados quedaron encantados.", estrellas: "★ ★ ★ ★ ★" }
+    { nombre: "Lucía P.", texto: "Excelente servicio y una torta espectacular. Todos nuestros invitados quedaron encantados.", estrellas: "★ ★ ★ ★ ★" },
+    { nombre: "Andrés G.", texto: "La personalización fue increíble. Lograron exactamente lo que soñábamos.", estrellas: "★ ★ ★ ★ ★" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 2. Obtener el ID de la torta desde la URL (ej: detalle.html?id=d1)
     const urlParams = new URLSearchParams(window.location.search);
-    const cakeId = urlParams.get('id') || "d1"; // Por defecto carga "d1" si no hay ID para pruebas
-
-    // Buscar la torta en el arreglo
+    const cakeId = urlParams.get('id') || "1";
     const tortaSeleccionada = catalogoTortas.find(t => t.id === cakeId);
 
     if (tortaSeleccionada) {
-        // 3. Inyectar los datos en el HTML
         document.getElementById('detail-image').src = tortaSeleccionada.imagen;
+        document.getElementById('detail-image').alt = tortaSeleccionada.nombre;
         document.getElementById('detail-title').textContent = tortaSeleccionada.nombre;
         document.getElementById('detail-desc').textContent = tortaSeleccionada.descripcion;
         document.getElementById('detail-price').textContent = `S/ ${tortaSeleccionada.precio.toFixed(2)}`;
 
-        // Inyectar etiquetas de sabores
         const flavorContainer = document.getElementById('detail-flavors');
         flavorContainer.innerHTML = '';
         tortaSeleccionada.sabores.forEach(sabor => {
@@ -81,12 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Renderizar las reseñas
     const reviewsContainer = document.getElementById('reviews-container');
     reviewsContainer.innerHTML = '';
-    
     reseñasDemo.forEach(reseña => {
-        const initial = reseña.nombre.charAt(0); // Primera letra para el avatar
+        const initial = reseña.nombre.charAt(0);
         reviewsContainer.innerHTML += `
             <div class="review-card d-flex gap-3">
                 <div class="avatar-placeholder flex-shrink-0">${initial}</div>

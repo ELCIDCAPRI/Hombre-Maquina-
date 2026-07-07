@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="detalle.css">
+    <link rel="stylesheet" href="../../shared/accessibility.css">
 </head>
 <body>
     <header>
@@ -33,14 +34,28 @@
                         <li class="nav-item"><a class="nav-link" href="../../Contacto/contacto.html">Contacto</a></li>
                     </ul>
 
-                    <div class="nav-right d-flex align-items-center gap-4 mt-3 mt-lg-0 pb-3 pb-lg-0">
-                        
-                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="toggleCart()">
+                    <div class="nav-right d-flex align-items-center gap-3 mt-3 mt-lg-0 pb-3 pb-lg-0">
+
+                        <button class="auth-btn bg-transparent border-0 p-1 auth-logged-out" onclick="Auth.openModal()" aria-label="Iniciar sesión" title="Iniciar sesión">
+                            <span class="fs-5" style="line-height:1;">👤</span>
+                        </button>
+
+                        <div class="auth-logged-in d-none align-items-center gap-2">
+                            <span class="auth-user-name text-muted" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                            <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Admin" title="Admin">
+                                <span class="fs-6" style="line-height:1;">⚙️</span>
+                            </button>
+                            <button class="auth-btn bg-transparent border-0 p-1" onclick="Auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                                <span class="fs-6" style="line-height:1;">🚪</span>
+                            </button>
+                        </div>
+
+                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()">
                             <span class="fs-4">🛒</span>
                             <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
                         </button>
 
-                        <button class="nav-cta rounded-0"  onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
+                        <button class="nav-cta rounded-0">
                             <a href="../../Personalizacion/personalizacion.html">PERSONALIZAR</a>
                         </button>
                     </div>
@@ -100,10 +115,39 @@
         </section>
     </main>
 
+    <!-- Cart Panel -->
+    <div class="cart-panel-overlay" id="cart-overlay" onclick="Cart.closePanel()" aria-hidden="true"></div>
+    <div class="cart-panel" id="cart-panel" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+        <div class="cart-panel-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="border-color: #f0e9df !important;">
+            <h5 class="mb-0" style="font-family: 'Playfair Display', serif; color: var(--brown);">Tu Carrito</h5>
+            <button class="btn btn-sm border-0" onclick="Cart.closePanel()" aria-label="Cerrar carrito" style="font-size: 1.3rem; color: var(--muted);">&times;</button>
+        </div>
+        <div class="cart-panel-body px-3 py-2" id="cart-items" style="flex: 1; overflow-y: auto;">
+            <div class="cart-empty text-center py-5">
+                <p class="text-muted mb-1">Tu carrito está vacío</p>
+                <small class="text-muted">Explora nuestro catálogo y personaliza tu torta ideal</small>
+            </div>
+        </div>
+        <div class="cart-panel-footer px-4 py-3 border-top" style="border-color: #f0e9df !important;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">Total</span>
+                <strong id="cart-total" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.2rem;">S/ 0.00</strong>
+            </div>
+            <button class="btn-primary-custom w-100 shadow-sm" onclick="Cart.checkout()" aria-label="Realizar pedido">
+                REALIZAR PEDIDO
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
     <footer class="text-center py-4 mt-5 border-top">
         <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../shared/cart.js"></script>
+    <script src="../../shared/auth.js"></script>
+    <script src="../../shared/accessibility.js"></script>
     <script src="detalle.js"></script>
 </body>
