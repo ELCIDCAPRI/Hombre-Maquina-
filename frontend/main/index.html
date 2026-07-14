@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Taller de Sabores — Pasteles de Boda</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../shared/accessibility.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+            <div class="container-fluid px-4 px-md-5">
+                
+                <a class="navbar-brand nav-logo text-decoration-none" href="#">
+                    <span>TALLER DE SABORES</span>
+                    <em>PASTELES DE BODA · LIMA</em>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Menú de navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
+                        <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#catalogo-destacado">Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#personalizar">Personalización</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Nosotros/nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="../Contacto/contacto.html">Contacto</a></li>
+                    </ul>
+
+                    <div class="nav-right d-flex align-items-center gap-3 mt-3 mt-lg-0 pb-3 pb-lg-0">
+
+                        <button class="auth-btn bg-transparent border-0 p-1 auth-logged-out" onclick="Auth.openModal()" aria-label="Iniciar sesión" title="Iniciar sesión">
+                            <span class="fs-5" style="line-height:1;">👤</span>
+                        </button>
+
+                        <div class="auth-logged-in d-none align-items-center gap-2">
+                            <span class="auth-user-name text-muted" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                            <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Admin" title="Admin">
+                                <span class="fs-6" style="line-height:1;">⚙️</span>
+                            </button>
+                            <button class="auth-btn bg-transparent border-0 p-1" onclick="Auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                                <span class="fs-6" style="line-height:1;">🚪</span>
+                            </button>
+                        </div>
+
+                        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()">
+                            <span class="fs-4">🛒</span>
+                            <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
+                        </button>
+
+                        <button class="nav-cta rounded-0" onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
+                            <a href="../Personalizacion/personalizacion.html">PERSONALIZAR</a>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+  <!-- HERO -->
+  <section id="inicio" class="hero d-flex align-items-center position-relative overflow-hidden">
+    <div class="hero-bg-shape"></div>
+
+    <div class="container">
+      <div class="row align-items-center justify-content-center gap-lg-5">
+        <div class="col-12 col-lg-5 mb-5 mb-lg-0 text-center position-relative fade-in-left">
+          <div class="hero-image-wrapper">
+            <img src="img/Principal.jpeg" alt="Torta de bodas soñada en Lima" class="img-fluid hero-img">
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5 fade-in-right">
+          <div class="hero-content">
+            <span class="hero-top d-block mb-3">
+              LIMA, PERÚ · DESDE 2018
+            </span>
+            <h1 class="hero-title display-4 mb-4">
+              Tu torta de bodas soñada, <br>
+              <span class="text-highlight">hecha realidad.</span>
+            </h1>
+            <p class="hero-sub lead mb-5">
+              Diseña tu torta perfecta con nosotros, desde el primer piso hasta el último detalle.
+            </p>
+            <button class="btn-primary-custom shadow-sm">
+              Diseñar mi torta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="benefits py-5">
+    <div class="container">
+      <div class="row g-4 text-center">
+        <div class="col-12 col-md-4">
+          <div class="benefit-card p-4 h-100">
+            <h3 class="benefit-title mb-3">Personalización</h3>
+            <p class="benefit-text mb-0">Diseña cada detalle a tu gusto.</p>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="benefit-card p-4 h-100">
+            <h3 class="benefit-title mb-3">Precio transparente</h3>
+            <p class="benefit-text mb-0">Sin sorpresas, solo claridad.</p>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="benefit-card p-4 h-100">
+            <h3 class="benefit-title mb-3">Entrega segura</h3>
+            <p class="benefit-text mb-0">Tu torta llega perfecta a tu evento.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="personalizar" class="cta-section py-5 my-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 text-center p-5 custom-cta-box">
+          <h2 class="cta-title mb-4">¿Listo para crear tu torta?</h2>
+          <button class="btn-primary-custom shadow-sm">
+            <a href="../Personalizacion/personalizacion.html">Configurar mi torta</a>
+          </button> 
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section id="catalogo-destacado" class="py-5">
+    <div class="container my-5">
+        
+        <div class="text-center mb-5">
+            <span class="subtitle-featured">Nuestra Selección</span>
+            <h2 class="title-featured mt-2">Nuestras tortas destacadas</h2>
+            <div class="divider-gold mx-auto mt-3"></div>
+        </div>
+
+        <div class="row g-4" id="featured-grid">
+            </div>
+
+        <div class="text-center mt-5 pt-3">
+            <button onclick="window.location.href='../Catalogo/catalogo.html'" class="btn-ver-mas">
+                VER CATÁLOGO COMPLETO
+            </button>
+        </div>
+
+    </div>
+  </section>
+
+  <!-- RESEÑAS -->
+  <section id="resenas" class="py-5">
+    <div class="container my-5">
+      <div class="text-center mb-5">
+        <span class="subtitle-featured">Testimonios</span>
+        <h2 class="title-featured mt-2">Lo que dicen nuestros clientes</h2>
+        <div class="divider-gold mx-auto mt-3"></div>
+      </div>
+      <div class="row g-4 justify-content-center" id="reviews-grid">
+      </div>
+    </div>
+  </section>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Cart Panel -->
+  <div class="cart-panel-overlay" id="cart-overlay" onclick="Cart.closePanel()" aria-hidden="true"></div>
+  <div class="cart-panel" id="cart-panel" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+    <div class="cart-panel-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="border-color: #f0e9df !important;">
+      <h5 class="mb-0" style="font-family: 'Playfair Display', serif; color: var(--brown);">Tu Carrito</h5>
+      <button class="btn btn-sm border-0" onclick="Cart.closePanel()" aria-label="Cerrar carrito" style="font-size: 1.3rem; color: var(--muted);">&times;</button>
+    </div>
+    <div class="cart-panel-body px-3 py-2" id="cart-items" style="flex: 1; overflow-y: auto;">
+      <div class="cart-empty text-center py-5">
+        <p class="text-muted mb-1">Tu carrito está vacío</p>
+        <small class="text-muted">Explora nuestro catálogo y personaliza tu torta ideal</small>
+      </div>
+    </div>
+    <div class="cart-panel-footer px-4 py-3 border-top" style="border-color: #f0e9df !important;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">Total</span>
+        <strong id="cart-total" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.2rem;">S/ 0.00</strong>
+      </div>
+      <button class="btn-primary-custom w-100 shadow-sm" onclick="Cart.checkout()" aria-label="Realizar pedido">
+        REALIZAR PEDIDO
+      </button>
+    </div>
+  </div>
+
+  <footer class="text-center py-4 mt-5 border-top">
+    <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
+  </footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/cart.js"></script>
+<script src="../shared/auth.js"></script>
+<script src="../shared/accessibility.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
