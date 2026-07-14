@@ -53,7 +53,11 @@
               </button>
             </div>
 
-            <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()" aria-label="Abrir carrito de compras">
+            <a href="../admin.html" class="d-flex align-items-center gap-1 text-decoration-none" style="color:#9c8470;font-size:0.8rem;" title="Panel de administrador">
+          <span>⚙️</span><span class="d-none d-lg-inline">Admin</span>
+        </a>
+
+        <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()" aria-label="Abrir carrito de compras">
               <span class="fs-4">🛒</span>
               <span class="cart-count position-absolute rounded-pill" id="cartCount" aria-live="polite" aria-label="0 productos en el carrito">0</span>
             </button>

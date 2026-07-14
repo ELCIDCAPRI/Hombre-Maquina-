@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador — Taller de Sabores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/admin.css">
+  <link rel="stylesheet" href="shared/accessibility.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="admin-login" class="admin-login-wrapper d-none">
+    <div class="admin-login-card">
+      <div class="admin-login-icon">🔐</div>
+      <h2>Panel de Administración</h2>
+      <p>Ingresa el código de acceso para continuar</p>
+      <form onsubmit="return Admin._handleCode(event)">
+        <div class="mb-3">
+          <input type="password" class="form-control" id="admin-code-input" placeholder="•••" maxlength="10" autocomplete="off" autofocus>
+        </div>
+        <div id="admin-code-error" class="text-danger small mb-3 d-none">Código incorrecto</div>
+        <button type="submit" class="btn w-100" style="background:#bda57b;color:white;padding:12px;border-radius:8px;font-weight:500;">ENTRAR</button>
+      </form>
+      <a href="main/index.html" class="d-inline-block mt-3" style="color:#9c8470;font-size:0.82rem;text-decoration:none;">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" class="admin-dashboard d-none">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-brand">
+        <h3>Taller de Sabores</h3>
+        <small>Administración</small>
+      </div>
+
+      <button class="sidebar-link active" data-section="dashboard" onclick="Admin.switchSection('dashboard')">
+        <span class="sidebar-icon">📊</span>
+        <span>Dashboard</span>
+      </button>
+      <button class="sidebar-link" data-section="pedidos" onclick="Admin.switchSection('pedidos')">
+        <span class="sidebar-icon">📦</span>
+        <span>Pedidos</span>
+      </button>
+      <button class="sidebar-link" data-section="usuarios" onclick="Admin.switchSection('usuarios')">
+        <span class="sidebar-icon">👥</span>
+        <span>Usuarios</span>
+      </button>
+      <button class="sidebar-link" data-section="resenas" onclick="Admin.switchSection('resenas')">
+        <span class="sidebar-icon">⭐</span>
+        <span>Reseñas</span>
+      </button>
+      <button class="sidebar-link" data-section="contactos" onclick="Admin.switchSection('contactos')">
+        <span class="sidebar-icon">✉️</span>
+        <span>Contactos</span>
+      </button>
+
+      <div class="sidebar-logout">
+        <button class="sidebar-link" onclick="Admin.logout()">
+          <span class="sidebar-icon">🚪</span>
+          <span>Salir</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+      <!-- Dashboard -->
+      <div id="section-dashboard" class="admin-section">
+        <div class="admin-header">
+          <h1>Dashboard</h1>
+          <p>Vista general de tu tienda</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="stat-usuarios">—</div>
+            <div class="stat-label">Usuarios</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="stat-pedidos">—</div>
+            <div class="stat-label">Pedidos totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value" id="stat-pendientes">—</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="stat-ingresos">—</div>
+            <div class="stat-label">Ingresos totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="stat-resenas">—</div>
+            <div class="stat-label">Reseñas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✉️</div>
+            <div class="stat-value" id="stat-contactos">—</div>
+            <div class="stat-label">Contactos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pedidos -->
+      <div id="section-pedidos" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Pedidos</h1>
+          <p>Todos los pedidos realizados</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="table-pedidos-body">
+              <tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Usuarios -->
+      <div id="section-usuarios" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Usuarios</h1>
+          <p>Todos los usuarios registrados</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody id="table-usuarios-body">
+              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reseñas -->
+      <div id="section-resenas" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Reseñas</h1>
+          <p>Opiniones de tus clientes</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Autor</th>
+                <th>Calificación</th>
+                <th>Texto</th>
+              </tr>
+            </thead>
+            <tbody id="table-resenas-body">
+              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contactos -->
+      <div id="section-contactos" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Contactos</h1>
+          <p>Mensajes recibidos</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Mensaje</th>
+              </tr>
+            </thead>
+            <tbody id="table-contactos-body">
+              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared/supabase.js"></script>
+  <script src="shared/admin.js"></script>
+  <script src="shared/accessibility.js"></script>
+
+  <script>
+    Admin._handleCode = function(e) {
+      e.preventDefault();
+      const code = document.getElementById('admin-code-input').value;
+      const errorEl = document.getElementById('admin-code-error');
+      if (!Admin.authenticate(code)) {
+        errorEl.classList.remove('d-none');
+        document.getElementById('admin-code-input').value = '';
+        document.getElementById('admin-code-input').focus();
+      }
+    };
+  </script>
+</body>
+</html>
