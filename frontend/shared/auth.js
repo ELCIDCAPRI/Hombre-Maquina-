@@ -68,22 +68,15 @@ const Auth = {
     async register(nombre, email, password) {
         const trimmed = email.trim().toLowerCase();
         const users = this._getUsers();
-
         if (users.find(u => u.email === trimmed)) {
             return { ok: false, error: 'Este correo ya está registrado' };
         }
-
         const newUser = {
             id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-            nombre: nombre.trim(),
-            email: trimmed,
-            password: password,
-            rol: 'cliente'
+            nombre: nombre.trim(), email: trimmed, password: password, rol: 'cliente'
         };
-
         users.push(newUser);
         this._saveUsers(users);
-
         return { ok: true, user: { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol } };
     },
 
@@ -91,11 +84,7 @@ const Auth = {
         const trimmed = email.trim().toLowerCase();
         const users = this._getUsers();
         const user = users.find(u => u.email === trimmed && u.password === password);
-
-        if (!user) {
-            return { ok: false, error: 'Correo o contraseña incorrectos' };
-        }
-
+        if (!user) return { ok: false, error: 'Correo o contraseña incorrectos' };
         const session = { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol };
         localStorage.setItem(this._key, JSON.stringify(session));
         this._notify();
@@ -120,30 +109,38 @@ const Auth = {
         return !!this.getUser();
     },
 
-    createAdmin(nombre, email, password) {
+    // --- CRUD Users ---
+
+    createUser(nombre, email, password, rol) {
         const trimmed = email.trim().toLowerCase();
         const users = this._getUsers();
-
         if (users.find(u => u.email === trimmed)) {
             return { ok: false, error: 'Este correo ya existe' };
         }
-
-        const newAdmin = {
+        const newUser = {
             id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-            nombre: nombre.trim(),
-            email: trimmed,
-            password: password,
-            rol: 'admin'
+            nombre: nombre.trim(), email: trimmed, password: password, rol: rol || 'cliente'
         };
-
-        users.push(newAdmin);
+        users.push(newUser);
         this._saveUsers(users);
-
-        return { ok: true, user: newAdmin };
+        return { ok: true, user: newUser };
     },
 
-    getAllUsers() {
-        return this._getUsers().map(u => ({ id: u.id, nombre: u.nombre, email: u.email, rol: u.rol }));
+    updateUser(id, data) {
+        const users = this._getUsers();
+        const user = users.find(u => u.id === id);
+        if (!user) return { ok: false, error: 'Usuario no encontrado' };
+        if (data.email) {
+            const trimmed = data.email.trim().toLowerCase();
+            const exists = users.find(u => u.email === trimmed && u.id !== id);
+            if (exists) return { ok: false, error: 'El correo ya está en uso' };
+            user.email = trimmed;
+        }
+        if (data.nombre) user.nombre = data.nombre.trim();
+        if (data.password) user.password = data.password;
+        if (data.rol) user.rol = data.rol;
+        this._saveUsers(users);
+        return { ok: true, user: user };
     },
 
     deleteUser(id) {
@@ -151,22 +148,55 @@ const Auth = {
         this._saveUsers(users);
     },
 
+    getAllUsers() {
+        return this._getUsers().map(u => ({ id: u.id, nombre: u.nombre, email: u.email, rol: u.rol, password: u.password }));
+    },
+
+    getUserById(id) {
+        return this._getUsers().find(u => u.id === id) || null;
+    },
+
+    createAdmin(nombre, email, password) {
+        return this.createUser(nombre, email, password, 'admin');
+    },
+
     updateUserRole(id, newRole) {
         const users = this._getUsers();
         const user = users.find(u => u.id === id);
-        if (user) {
-            user.rol = newRole;
-            this._saveUsers(users);
-        }
+        if (user) { user.rol = newRole; this._saveUsers(users); }
     },
+
+    // --- Orders ---
 
     getOrders() {
         return JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
     },
 
+    getOrderById(id) {
+        return this.getOrders().find(o => o.id === id) || null;
+    },
+
+    updateOrder(id, data) {
+        const orders = this.getOrders();
+        const order = orders.find(o => o.id === id);
+        if (!order) return { ok: false, error: 'Pedido no encontrado' };
+        if (data.estado) order.estado = data.estado;
+        if (data.total !== undefined) order.total = data.total;
+        if (data.cliente) order.cliente = data.cliente;
+        if (data.telefono) order.telefono = data.telefono;
+        if (data.direccion) order.direccion = data.direccion;
+        if (data.notas !== undefined) order.notas = data.notas;
+        localStorage.setItem(this._ordersKey, JSON.stringify(orders));
+        return { ok: true, order: order };
+    },
+
+    // --- Reviews ---
+
     getReviews() {
         return JSON.parse(localStorage.getItem(this._reviewsKey) || '[]');
     },
+
+    // --- Contacts ---
 
     getContacts() {
         return JSON.parse(localStorage.getItem(this._contactsKey) || '[]');
@@ -175,16 +205,15 @@ const Auth = {
     markContactRead(id) {
         const contacts = this.getContacts();
         const c = contacts.find(x => x.id === id);
-        if (c) {
-            c.leido = true;
-            localStorage.setItem(this._contactsKey, JSON.stringify(contacts));
-        }
+        if (c) { c.leido = true; localStorage.setItem(this._contactsKey, JSON.stringify(contacts)); }
     },
 
     deleteContact(id) {
         const contacts = this.getContacts().filter(x => x.id !== id);
         localStorage.setItem(this._contactsKey, JSON.stringify(contacts));
     },
+
+    // --- UI ---
 
     _notify() {
         window.dispatchEvent(new CustomEvent('auth-change', { detail: this.getUser() }));
@@ -193,23 +222,14 @@ const Auth = {
 
     _updateUI() {
         const user = this.getUser();
-        document.querySelectorAll('.auth-user-name').forEach(el => {
-            el.textContent = user ? user.nombre : '';
-        });
-        document.querySelectorAll('.auth-logged-in').forEach(el => {
-            el.classList.toggle('d-none', !user);
-        });
-        document.querySelectorAll('.auth-logged-out').forEach(el => {
-            el.classList.toggle('d-none', !!user);
-        });
-        document.querySelectorAll('.auth-admin-link').forEach(el => {
-            el.classList.toggle('d-none', !this.isAdmin());
-        });
+        document.querySelectorAll('.auth-user-name').forEach(el => { el.textContent = user ? user.nombre : ''; });
+        document.querySelectorAll('.auth-logged-in').forEach(el => { el.classList.toggle('d-none', !user); });
+        document.querySelectorAll('.auth-logged-out').forEach(el => { el.classList.toggle('d-none', !!user); });
+        document.querySelectorAll('.auth-admin-link').forEach(el => { el.classList.toggle('d-none', !this.isAdmin()); });
     },
 
     _injectModals() {
         if (document.getElementById('authModal')) return;
-
         const div = document.createElement('div');
         div.innerHTML = `
         <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">

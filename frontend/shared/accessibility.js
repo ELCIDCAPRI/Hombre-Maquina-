@@ -8,8 +8,7 @@ const Accessibility = {
         cursor: false,
         readingMask: false,
         dyslexiaFriendly: false,
-        bigLineHeight: false,
-        ruler: false
+        bigLineHeight: false
     },
     speechSynth: window.speechSynthesis,
 
@@ -19,6 +18,8 @@ const Accessibility = {
         this._injectWidget();
         this._apply();
         this._updateToggles();
+        this._updateProfileUI();
+        this._updateLanguage();
     },
 
     _injectWidget() {
@@ -52,8 +53,6 @@ const Accessibility = {
                 <button class="acc-panel-close" id="acc-close" aria-label="Cerrar panel">&times;</button>
             </div>
             <div class="acc-panel-body">
-
-                <!-- SECCIÓN 1: IDIOMA -->
                 <div class="acc-section">
                     <div class="acc-section-label">Idioma</div>
                     <div class="acc-select-wrapper">
@@ -65,34 +64,27 @@ const Accessibility = {
                     </div>
                 </div>
 
-                <!-- SECCIÓN 2: PERFIL -->
                 <div class="acc-section">
                     <div class="acc-section-label">Perfil</div>
                     <div class="acc-profile-list" id="acc-profiles">
                         <div class="acc-profile-option ${s.profile === 'vision_baja' ? 'active' : ''}" data-profile="vision_baja">
-                            <div class="acc-radio"></div>
-                            <span>Visión Baja</span>
+                            <div class="acc-radio"></div><span>Visión Baja</span>
                         </div>
                         <div class="acc-profile-option ${s.profile === 'dislexia' ? 'active' : ''}" data-profile="dislexia">
-                            <div class="acc-radio"></div>
-                            <span>Dislexia</span>
+                            <div class="acc-radio"></div><span>Dislexia</span>
                         </div>
                         <div class="acc-profile-option ${s.profile === 'tdah' ? 'active' : ''}" data-profile="tdah">
-                            <div class="acc-radio"></div>
-                            <span>TDHA</span>
+                            <div class="acc-radio"></div><span>TDHA</span>
                         </div>
                         <div class="acc-profile-option ${s.profile === 'daltonismo' ? 'active' : ''}" data-profile="daltonismo">
-                            <div class="acc-radio"></div>
-                            <span>Daltonismo</span>
+                            <div class="acc-radio"></div><span>Daltonismo</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECCIÓN 3: AJUSTES VISUALES -->
                 <div class="acc-section">
                     <div class="acc-section-label">Ajustes Visuales</div>
                     <div class="acc-toggles-grid">
-
                         <div>
                             <div style="font-size:0.82rem;color:var(--brown,#4d3e35);margin-bottom:6px;">Tamaño de texto</div>
                             <div class="acc-slider-wrapper">
@@ -100,44 +92,30 @@ const Accessibility = {
                                 <span class="acc-slider-value" id="acc-font-value">${s.fontSize}%</span>
                             </div>
                         </div>
-
                         <button class="acc-toggle-btn ${s.contrast ? 'active' : ''}" data-setting="contrast" id="acc-contrast">
-                            <span>Contrastes</span>
-                            <div class="acc-toggle-switch"></div>
+                            <span>Contrastes</span><div class="acc-toggle-switch"></div>
                         </button>
-
                         <button class="acc-toggle-btn ${s.cursor ? 'active' : ''}" data-setting="cursor" id="acc-cursor">
-                            <span>Cursor</span>
-                            <div class="acc-toggle-switch"></div>
+                            <span>Cursor</span><div class="acc-toggle-switch"></div>
                         </button>
-
                         <button class="acc-toggle-btn ${s.readingMask ? 'active' : ''}" data-setting="readingMask" id="acc-mask">
-                            <span>Máscara de lectura</span>
-                            <div class="acc-toggle-switch"></div>
+                            <span>Máscara de lectura</span><div class="acc-toggle-switch"></div>
                         </button>
-
                         <button class="acc-toggle-btn ${s.dyslexiaFriendly ? 'active' : ''}" data-setting="dyslexiaFriendly" id="acc-dyslexia">
-                            <span>Dislexia amigable</span>
-                            <div class="acc-toggle-switch"></div>
+                            <span>Dislexia amigable</span><div class="acc-toggle-switch"></div>
                         </button>
-
                         <button class="acc-toggle-btn ${s.bigLineHeight ? 'active' : ''}" data-setting="bigLineHeight" id="acc-lineheight">
-                            <span>Interlineado</span>
-                            <div class="acc-toggle-switch"></div>
+                            <span>Interlineado</span><div class="acc-toggle-switch"></div>
                         </button>
-
                     </div>
                 </div>
-
             </div>
-
             <button class="acc-reset-btn" id="acc-reset">Restablecer</button>
         `;
 
         document.body.appendChild(btn);
         document.body.appendChild(overlay);
         document.body.appendChild(panel);
-
         this._bindEvents();
     },
 
@@ -153,16 +131,22 @@ const Accessibility = {
         document.querySelectorAll('.acc-profile-option').forEach(el => {
             el.onclick = () => {
                 const profile = el.dataset.profile;
-                this.settings.profile = this.settings.profile === profile ? null : profile;
+                if (this.settings.profile === profile) {
+                    this.settings.profile = null;
+                } else {
+                    this.settings.profile = profile;
+                }
                 document.querySelectorAll('.acc-profile-option').forEach(o => o.classList.remove('active'));
                 if (this.settings.profile) el.classList.add('active');
                 this._save();
                 this._applyProfile();
+                this._apply();
+                this._updateToggles();
+                this._updateSlider();
             };
         });
 
-        const toggles = ['contrast', 'cursor', 'readingMask', 'dyslexiaFriendly', 'bigLineHeight'];
-        toggles.forEach(key => {
+        ['contrast', 'cursor', 'readingMask', 'dyslexiaFriendly', 'bigLineHeight'].forEach(key => {
             const id = key === 'contrast' ? 'acc-contrast' :
                        key === 'cursor' ? 'acc-cursor' :
                        key === 'readingMask' ? 'acc-mask' :
@@ -188,35 +172,22 @@ const Accessibility = {
     },
 
     togglePanel() {
-        const panel = document.getElementById('acc-panel');
-        const overlay = document.getElementById('acc-overlay');
-        panel.classList.toggle('show');
-        overlay.classList.toggle('show');
+        document.getElementById('acc-panel').classList.toggle('show');
+        document.getElementById('acc-overlay').classList.toggle('show');
     },
 
     reset() {
         this.settings = {
-            fontSize: 100,
-            language: 'es',
-            profile: null,
-            contrast: false,
-            cursor: false,
-            readingMask: false,
-            dyslexiaFriendly: false,
-            bigLineHeight: false,
-            ruler: false
+            fontSize: 100, language: 'es', profile: null,
+            contrast: false, cursor: false, readingMask: false,
+            dyslexiaFriendly: false, bigLineHeight: false
         };
         this._save();
         this._apply();
         this._updateToggles();
         this._updateProfileUI();
         this._updateLanguage();
-        const slider = document.getElementById('acc-font-slider');
-        if (slider) slider.value = 100;
-        const fv = document.getElementById('acc-font-value');
-        if (fv) fv.textContent = '100%';
-        const lang = document.getElementById('acc-language');
-        if (lang) lang.value = 'es';
+        this._updateSlider();
     },
 
     _save() {
@@ -228,94 +199,55 @@ const Accessibility = {
         const s = this.settings;
 
         html.style.fontSize = s.fontSize + '%';
-
         html.classList.toggle('acc-high-contrast', s.contrast);
         html.classList.toggle('acc-cursor-large', s.cursor);
         html.classList.toggle('acc-dyslexia-friendly', s.dyslexiaFriendly);
         html.classList.toggle('acc-big-line-height', s.bigLineHeight);
 
-        const mask = document.getElementById('acc-reading-mask');
-        if (s.readingMask && !mask) {
-            const m = document.createElement('div');
-            m.id = 'acc-reading-mask';
-            m.className = 'acc-reading-mask-track';
-            m.style.top = '0px';
-            document.body.appendChild(m);
-            document.addEventListener('mousemove', this._maskHandler);
-        } else if (!s.readingMask && mask) {
-            mask.remove();
-            document.removeEventListener('mousemove', this._maskHandler);
-        }
+        const htmlClasses = html.className.split(' ').filter(c =>
+            !c.startsWith('acc-profile-')
+        );
+        if (s.profile) htmlClasses.push('acc-profile-' + s.profile);
+        html.className = htmlClasses.join(' ');
 
-        if (s.profile === 'tdah' && !document.getElementById('acc-ruler') && s.ruler !== false) {
-            this._enableRuler();
-        }
-        if (s.profile !== 'tdah') {
-            this._disableRuler();
-        }
-
-        this._applyProfile();
+        this._applyReadingMask(s.readingMask);
     },
 
-    _maskHandler: function(e) {
-        const mask = document.getElementById('acc-reading-mask');
-        if (mask) {
-            mask.style.top = (e.clientY - 60) + 'px';
+    _applyReadingMask(active) {
+        const existing = document.getElementById('acc-reading-mask');
+        if (active && !existing) {
+            const mask = document.createElement('div');
+            mask.id = 'acc-reading-mask';
+            mask.className = 'acc-reading-mask-track';
+            mask.style.top = '0px';
+            document.body.appendChild(mask);
+            this._maskMoveHandler = (e) => {
+                mask.style.top = (e.clientY - 60) + 'px';
+            };
+            document.addEventListener('mousemove', this._maskMoveHandler);
+        } else if (!active && existing) {
+            existing.remove();
+            if (this._maskMoveHandler) {
+                document.removeEventListener('mousemove', this._maskMoveHandler);
+                this._maskMoveHandler = null;
+            }
         }
-    },
-
-    _enableRuler() {
-        if (document.getElementById('acc-ruler')) return;
-        const ruler = document.createElement('div');
-        ruler.id = 'acc-ruler';
-        ruler.className = 'acc-ruler';
-        document.body.appendChild(ruler);
-        document.addEventListener('mousemove', this._rulerMoveHandler);
-    },
-
-    _disableRuler() {
-        const ruler = document.getElementById('acc-ruler');
-        if (ruler) ruler.remove();
-        document.removeEventListener('mousemove', this._rulerMoveHandler);
-    },
-
-    _rulerMoveHandler: function(e) {
-        const ruler = document.getElementById('acc-ruler');
-        if (ruler) ruler.style.top = (e.clientY - 2) + 'px';
     },
 
     _applyProfile() {
-        const html = document.documentElement;
-        html.classList.remove('acc-profile-vision', 'acc-profile-dislexia', 'acc-profile-tdah', 'acc-profile-daltonismo');
-
-        switch (this.settings.profile) {
+        const s = this.settings;
+        switch (s.profile) {
             case 'vision_baja':
-                html.classList.add('acc-profile-vision');
-                this.settings.fontSize = Math.max(this.settings.fontSize, 130);
-                this.settings.contrast = true;
-                const sl = document.getElementById('acc-font-slider');
-                if (sl) sl.value = this.settings.fontSize;
-                const fv = document.getElementById('acc-font-value');
-                if (fv) fv.textContent = this.settings.fontSize + '%';
-                this._apply();
-                this._updateToggles();
+                s.fontSize = Math.max(s.fontSize, 130);
+                s.contrast = true;
                 break;
-
             case 'dislexia':
-                html.classList.add('acc-profile-dislexia');
-                this.settings.dyslexiaFriendly = true;
-                this.settings.bigLineHeight = true;
-                this._apply();
-                this._updateToggles();
+                s.dyslexiaFriendly = true;
+                s.bigLineHeight = true;
                 break;
-
             case 'tdah':
-                html.classList.add('acc-profile-tdah');
-                this._enableRuler();
                 break;
-
             case 'daltonismo':
-                html.classList.add('acc-profile-daltonismo');
                 break;
         }
     },
@@ -323,10 +255,8 @@ const Accessibility = {
     _updateToggles() {
         const s = this.settings;
         const pairs = {
-            'acc-contrast': s.contrast,
-            'acc-cursor': s.cursor,
-            'acc-mask': s.readingMask,
-            'acc-dyslexia': s.dyslexiaFriendly,
+            'acc-contrast': s.contrast, 'acc-cursor': s.cursor,
+            'acc-mask': s.readingMask, 'acc-dyslexia': s.dyslexiaFriendly,
             'acc-lineheight': s.bigLineHeight
         };
         Object.entries(pairs).forEach(([id, active]) => {
@@ -341,24 +271,26 @@ const Accessibility = {
         });
     },
 
+    _updateSlider() {
+        const sl = document.getElementById('acc-font-slider');
+        const fv = document.getElementById('acc-font-value');
+        if (sl) sl.value = this.settings.fontSize;
+        if (fv) fv.textContent = this.settings.fontSize + '%';
+    },
+
     _updateLanguage() {
-        const langLabels = { es: 'Español ✓', en: 'English ✓', qu: 'Runasimi ✓' };
-        document.querySelectorAll('#acc-language option').forEach(opt => {
-            const val = opt.value;
-            const active = val === this.settings.language;
-            opt.textContent = langLabels[val] || opt.textContent.replace(' ✓', '') + (active ? ' ✓' : '');
-        });
+        const lang = document.getElementById('acc-language');
+        if (lang) lang.value = this.settings.language;
     },
 
     _speak(text) {
         if (!this.speechSynth) return;
         this.speechSynth.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = this.settings.language === 'en' ? 'en-US' :
-                         this.settings.language === 'qu' ? 'qu-PE' : 'es-PE';
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        this.speechSynth.speak(utterance);
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = this.settings.language === 'en' ? 'en-US' :
+                 this.settings.language === 'qu' ? 'qu-PE' : 'es-PE';
+        u.rate = 0.9;
+        this.speechSynth.speak(u);
     }
 };
 

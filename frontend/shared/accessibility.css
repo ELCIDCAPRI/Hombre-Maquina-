@@ -378,22 +378,7 @@
     transition: none;
 }
 
-/* READING MASK */
-.acc-reading-mask {
-    position: fixed;
-    inset: 0;
-    z-index: 99998;
-    pointer-events: none;
-    background: transparent;
-}
-.acc-reading-mask::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect x='10%25' y='0' width='80%25' height='120px' fill='white'/%3E%3C/svg%3E");
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect x='10%25' y='0' width='80%25' height='120px' fill='white'/%3E%3C/svg%3E");
-}
+/* READING MASK TRACK */
 .acc-reading-mask-track {
     position: fixed;
     left: 0;
@@ -429,6 +414,15 @@
 .acc-big-line-height dd,
 .acc-big-line-height dt {
     line-height: 2.2 !important;
+}
+
+/* DALTONISMO - Simulación de visión deitanómala (rojo-verde) */
+.acc-profile-daltonismo {
+    filter: saturate(0.6) contrast(1.1);
+}
+.acc-profile-daltonismo img,
+.acc-profile-daltonismo video {
+    filter: saturate(0.4) hue-rotate(15deg);
 }
 
 /* ============================================
