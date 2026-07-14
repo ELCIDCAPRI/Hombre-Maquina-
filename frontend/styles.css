@@ -517,3 +517,28 @@ body {
 @media (max-width: 991px) {
     .cart-panel { width: 100%; max-width: 100vw; right: -100vw; }
 }
+
+/* User dropdown */
+.auth-user-dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+.auth-user-dropdown-btn:hover,
+.auth-user-dropdown-btn:focus {
+    color: var(--brown);
+    background: transparent;
+    box-shadow: none;
+}
+.auth-user-dropdown-btn::after {
+    border-top-color: var(--muted);
+}
+.auth-user-dropdown-btn:hover::after {
+    border-top-color: var(--brown);
+}

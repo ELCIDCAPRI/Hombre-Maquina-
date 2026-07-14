@@ -61,6 +61,9 @@ const Auth = {
         document.querySelectorAll('.auth-admin-link').forEach(el => {
             el.classList.toggle('d-none', !this.isAdmin());
         });
+        document.querySelectorAll('.auth-user-dropdown-name').forEach(el => {
+            el.textContent = user ? user.nombre : '';
+        });
     },
 
     async getAllUsers() {

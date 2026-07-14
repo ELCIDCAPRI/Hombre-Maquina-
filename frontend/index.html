@@ -48,14 +48,18 @@
                             <span class="fs-5" style="line-height:1;">👤</span>
                         </button>
 
-                        <div class="auth-logged-in d-none align-items-center gap-2">
-                            <span class="auth-user-name text-muted" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-                            <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Admin" title="Admin">
-                                <span class="fs-6" style="line-height:1;">⚙️</span>
-                            </button>
-                            <button class="auth-btn bg-transparent border-0 p-1" onclick="Auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
-                                <span class="fs-6" style="line-height:1;">🚪</span>
-                            </button>
+                        <div class="auth-logged-in d-none">
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle auth-user-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span style="line-height:1;">👤</span>
+                                    <span class="auth-user-dropdown-name" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" style="min-width:180px;border-color:#f0e9df;">
+                                    <li><a class="dropdown-item auth-admin-link d-none" href="/admin/admin.html" style="font-size:0.88rem;">⚙️ Panel Admin</a></li>
+                                    <li><hr class="dropdown-divider auth-admin-link d-none" style="border-color:#f0e9df;"></li>
+                                    <li><a class="dropdown-item" href="#" onclick="Auth.logout(); return false;" style="font-size:0.88rem;">🚪 Cerrar sesión</a></li>
+                                </ul>
+                            </div>
                         </div>
 
                         <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()">
