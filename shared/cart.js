@@ -114,7 +114,7 @@ const Cart = {
         Array.from(div.children).forEach(child => document.body.appendChild(child));
     },
 
-    _handleCheckout(event) {
+    async _handleCheckout(event) {
         event.preventDefault();
         const items = this.getItems();
         if (items.length === 0) return;
@@ -126,16 +126,62 @@ const Cart = {
         const fechaEvento = document.getElementById('checkout-fecha').value;
         const notas = document.getElementById('checkout-notas').value.trim();
 
+        const errorEl = document.getElementById('checkout-error');
+
         if (!telefono || !direccion || !fechaEvento) {
-            document.getElementById('checkout-error').textContent = 'Completa todos los campos obligatorios.';
-            document.getElementById('checkout-error').classList.remove('d-none');
+            errorEl.textContent = 'Completa todos los campos obligatorios.';
+            errorEl.classList.remove('d-none');
             return;
         }
 
-        const orders = JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
+        const user = Auth.getUser();
         const total = items.reduce((s, i) => s + (i.precio || 0), 0);
+
+        // 1. Crear el pedido en Supabase
+        const { data: pedido, error: errorPedido } = await supabaseClient
+            .from('pedidos')
+            .insert({
+                usuario_id: user.id,
+                fecha_evento: fechaEvento,
+                metodo_entrega: 'delivery',
+                direccion: direccion,
+                total: total,
+                estado: 'pendiente'
+            })
+            .select()
+            .single();
+
+        if (errorPedido) {
+            console.error('Error al crear pedido:', errorPedido);
+            errorEl.textContent = 'No se pudo registrar el pedido. Intenta de nuevo.';
+            errorEl.classList.remove('d-none');
+            return;
+        }
+
+        // 2. Crear el detalle de cada torta del pedido
+        const detalles = items.map(item => ({
+            pedido_id: pedido.id,
+            torta_id: item.tortaId,
+            cantidad: 1,
+            precio_unitario: item.precio,
+            estado_personalizacion: notas || null
+        }));
+
+        const { error: errorDetalle } = await supabaseClient
+            .from('detalle_torta')
+            .insert(detalles);
+
+        if (errorDetalle) {
+            console.error('Error al guardar detalle del pedido:', errorDetalle);
+            errorEl.textContent = 'El pedido se creó, pero hubo un error al guardar los detalles.';
+            errorEl.classList.remove('d-none');
+            return;
+        }
+
+        // Guardamos también localmente para el panel de admin (visual, rápido)
+        const orders = JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
         orders.push({
-            id: 'ord-' + Date.now(),
+            id: pedido.id,
             items: [...items],
             total: total,
             fecha: new Date().toISOString(),

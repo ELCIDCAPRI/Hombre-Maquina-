@@ -1,48 +1,45 @@
-const tortasDestacadas = [
-    {
-        id: "d1",
-        nombre: "Elegancia Clásica",
-        descripcion: "Diseño minimalista con buttercream de merengue suizo y sutiles toques de pan de oro.",
-        imagen: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600"
-    },
-    {
-        id: "d2",
-        nombre: "Romance Rústico",
-        descripcion: "Estilo rústico semi-naked decorado con delicadas flores de estación naturales.",
-        imagen: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&q=80&w=600"
-    },
-    {
-        id: "d3",
-        nombre: "Encanto Botánico",
-        descripcion: "Elegante combinación de bizcocho al desnudo y crema texturizada, coronada con un arreglo floral silvestre.",
-        imagen: "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&q=80&w=600"
+async function cargarDestacadas() {
+    const featuredGrid = document.getElementById('featured-grid');
+    if (!featuredGrid) return;
+
+    const { data, error } = await supabaseClient
+        .from('tortas')
+        .select('*')
+        .eq('bestseller', true)
+        .eq('disponible', true);
+
+    if (error) {
+        console.error('Error al cargar destacadas:', error);
+        return;
     }
-];
+
+    featuredGrid.innerHTML = '';
+    data.forEach(torta => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4';
+        col.innerHTML = `
+            <div class="card h-100 featured-card">
+                <div class="featured-img-wrapper">
+                    <a href="Catalogo/detallePastel/detalle.html?id=${torta.id}">
+                        <img src="${torta.imagen}" alt="${torta.nombre}" loading="lazy">
+                    </a>
+                </div>
+                <div class="card-body text-center p-4 d-flex flex-column justify-content-center">
+                    <h4 style="font-family: 'Cormorant Garamond', serif; color: var(--brown); font-size: 1.4rem;" class="mb-2">
+                        ${torta.nombre}
+                    </h4>
+                    <p class="card-text text-muted mb-0" style="font-size: 0.9rem; line-height: 1.6;">
+                        ${torta.descripcion}
+                    </p>
+                </div>
+            </div>
+        `;
+        featuredGrid.appendChild(col);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    const featuredGrid = document.getElementById('featured-grid');
-    if (featuredGrid) {
-        tortasDestacadas.forEach(torta => {
-            const col = document.createElement('div');
-            col.className = 'col-md-4';
-            col.innerHTML = `
-                <div class="card h-100 featured-card">
-                    <div class="featured-img-wrapper">
-                        <img src="${torta.imagen}" alt="${torta.nombre}" loading="lazy">
-                    </div>
-                    <div class="card-body text-center p-4 d-flex flex-column justify-content-center">
-                        <h4 style="font-family: 'Cormorant Garamond', serif; color: var(--brown); font-size: 1.4rem;" class="mb-2">
-                            ${torta.nombre}
-                        </h4>
-                        <p class="card-text text-muted mb-0" style="font-size: 0.9rem; line-height: 1.6;">
-                            ${torta.descripcion}
-                        </p>
-                    </div>
-                </div>
-            `;
-            featuredGrid.appendChild(col);
-        });
-    }
+    cargarDestacadas();
 
     // Reviews
     const reseñas = [

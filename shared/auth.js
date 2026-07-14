@@ -1,6 +1,5 @@
 const Auth = {
     _key: 'ts_auth',
-    _usersKey: 'ts_users',
 
     _hash(str) {
         let h = 0;
@@ -11,47 +10,71 @@ const Auth = {
         return 'h' + Math.abs(h);
     },
 
-    _getUsers() {
-        return JSON.parse(localStorage.getItem(this._usersKey) || '[]');
-    },
-
-    _saveUsers(users) {
-        localStorage.setItem(this._usersKey, JSON.stringify(users));
-    },
-
     init() {
-        if (this._getUsers().length === 0) {
-            this._saveUsers([{
-                id: 'a1',
-                nombre: 'Administrador',
-                email: 'admin@tallerdesabores.pe',
-                password: this._hash('admin123'),
-                rol: 'admin'
-            }]);
-        }
+        // Ya no se crea un admin de prueba en localStorage.
+        // Si necesitas un admin, créalo directo en Supabase (Table Editor) con rol = 'admin'.
     },
 
-    register(nombre, email, password) {
+    async register(nombre, email, password) {
         const trimmed = email.trim().toLowerCase();
-        if (this._getUsers().find(u => u.email === trimmed)) {
+
+        // 1. Verificar si el correo ya existe
+        const { data: existente, error: errorBusqueda } = await supabaseClient
+            .from('usuarios')
+            .select('id')
+            .eq('correo', trimmed)
+            .maybeSingle();
+
+        if (errorBusqueda) {
+            console.error('Error verificando correo:', errorBusqueda);
+            return { ok: false, error: 'Error al verificar el correo. Intenta de nuevo.' };
+        }
+        if (existente) {
             return { ok: false, error: 'Este correo ya está registrado' };
         }
-        const users = this._getUsers();
-        users.push({
-            id: 'u' + Date.now(),
-            nombre: nombre.trim(),
-            email: trimmed,
-            password: this._hash(password),
-            rol: 'cliente'
-        });
-        this._saveUsers(users);
-        return { ok: true };
+
+        // 2. Insertar nuevo usuario
+        const { data, error } = await supabaseClient
+            .from('usuarios')
+            .insert({
+                nombre: nombre.trim(),
+                apellido: '', // ajusta si tu form pide apellido
+                correo: trimmed,
+                telefono: '', // ajusta si tu form pide telefono
+                password: this._hash(password),
+                rol: 'Cliente'
+            })
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error al registrar:', error);
+            return { ok: false, error: 'No se pudo completar el registro' };
+        }
+
+        return { ok: true, user: data };
     },
 
-    login(email, password) {
-        const user = this._getUsers().find(u => u.email === email.trim().toLowerCase() && u.password === this._hash(password));
-        if (!user) return { ok: false, error: 'Correo o contraseña incorrectos' };
-        const session = { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol };
+    async login(email, password) {
+        const trimmed = email.trim().toLowerCase();
+        const hashed = this._hash(password);
+
+        const { data: user, error } = await supabaseClient
+            .from('usuarios')
+            .select('*')
+            .eq('correo', trimmed)
+            .eq('password', hashed)
+            .maybeSingle();
+
+        if (error) {
+            console.error('Error al iniciar sesión:', error);
+            return { ok: false, error: 'Error al iniciar sesión. Intenta de nuevo.' };
+        }
+        if (!user) {
+            return { ok: false, error: 'Correo o contraseña incorrectos' };
+        }
+
+        const session = { id: user.id, nombre: user.nombre, email: user.correo, rol: user.rol };
         localStorage.setItem(this._key, JSON.stringify(session));
         this._notify();
         return { ok: true, user: session };
@@ -68,7 +91,7 @@ const Auth = {
 
     isAdmin() {
         const u = this.getUser();
-        return u && u.rol === 'admin';
+        return u && u.rol === 'Admin';
     },
 
     isLoggedIn() {
@@ -96,14 +119,15 @@ const Auth = {
         });
     },
 
-    getAllUsers() {
-        return this._getUsers().map(u => ({
-            id: u.id,
-            nombre: u.nombre,
-            email: u.email,
-            rol: u.rol,
-            password: undefined
-        }));
+    async getAllUsers() {
+        const { data, error } = await supabaseClient
+            .from('usuarios')
+            .select('id, nombre, correo, rol');
+        if (error) {
+            console.error('Error al obtener usuarios:', error);
+            return [];
+        }
+        return data;
     },
 
     _injectModals() {
@@ -198,12 +222,12 @@ const Auth = {
         }
     },
 
-    _handleLogin(event) {
+    async _handleLogin(event) {
         event.preventDefault();
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
         const errorEl = document.getElementById('login-error');
-        const result = this.login(email, password);
+        const result = await this.login(email, password);
         if (result.ok) {
             try { bootstrap.Modal.getInstance(document.getElementById('authModal')).hide(); } catch(e) {}
             document.getElementById('login-email').value = '';
@@ -217,7 +241,7 @@ const Auth = {
         }
     },
 
-    _handleRegister(event) {
+    async _handleRegister(event) {
         event.preventDefault();
         const nombre = document.getElementById('reg-name').value;
         const email = document.getElementById('reg-email').value;
@@ -230,7 +254,7 @@ const Auth = {
             successEl.classList.add('d-none');
             return;
         }
-        const result = this.register(nombre, email, password);
+        const result = await this.register(nombre, email, password);
         if (result.ok) {
             errorEl.classList.add('d-none');
             successEl.textContent = '✓ Registro exitoso. Ahora puedes iniciar sesión.';
@@ -251,47 +275,48 @@ const Auth = {
         if (el && bootstrap.Modal) bootstrap.Modal.getOrCreateInstance(el).show();
     },
 
-    openAdmin() {
+    async openAdmin() {
         const el = document.getElementById('adminModal');
         if (el && bootstrap.Modal) {
             bootstrap.Modal.getOrCreateInstance(el).show();
-            if (typeof Cart !== 'undefined' && Cart.getOrders) {
-                this._loadAdminData();
-            }
+            await this._loadAdminData();
         }
     },
 
-    _loadAdminData() {
-        const orders = Cart.getOrders ? Cart.getOrders() : [];
+    async _loadAdminData() {
+        const orders = (typeof Cart !== 'undefined' && Cart.getOrders) ? Cart.getOrders() : [];
         const ordersList = document.getElementById('admin-orders-list');
-        if (!ordersList) return;
-        if (orders.length === 0) {
-            ordersList.innerHTML = '<p class="text-muted text-center py-3">No hay pedidos registrados</p>';
-        } else {
-            ordersList.innerHTML = orders.reverse().map(o => `
-                <div class="border-bottom mb-2 pb-2" style="border-color:#f0e9df!important;">
-                    <div class="d-flex justify-content-between">
-                        <strong>${o.cliente}</strong>
-                        <span class="text-muted small">${new Date(o.fecha).toLocaleDateString('es-PE')}</span>
+        if (ordersList) {
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<p class="text-muted text-center py-3">No hay pedidos registrados</p>';
+            } else {
+                ordersList.innerHTML = orders.reverse().map(o => `
+                    <div class="border-bottom mb-2 pb-2" style="border-color:#f0e9df!important;">
+                        <div class="d-flex justify-content-between">
+                            <strong>${o.cliente}</strong>
+                            <span class="text-muted small">${new Date(o.fecha).toLocaleDateString('es-PE')}</span>
+                        </div>
+                        <div class="text-muted small">${o.email} ${o.telefono ? '· ' + o.telefono : ''}</div>
+                        ${o.direccion ? '<div class="text-muted small">📍 ' + o.direccion + '</div>' : ''}
+                        ${o.fechaEvento ? '<div class="text-muted small">📅 Evento: ' + new Date(o.fechaEvento + 'T12:00:00').toLocaleDateString('es-PE') + '</div>' : ''}
+                        ${o.notas ? '<div class="text-muted small" style="font-style:italic;">📝 ' + o.notas + '</div>' : ''}
+                        <div class="small mt-1">${o.items.map(i => i.nombre).join(', ')}</div>
+                        <div style="color:var(--gold);font-weight:bold;">S/ ${Number(o.total).toFixed(2)}</div>
                     </div>
-                    <div class="text-muted small">${o.email} ${o.telefono ? '· ' + o.telefono : ''}</div>
-                    ${o.direccion ? '<div class="text-muted small">📍 ' + o.direccion + '</div>' : ''}
-                    ${o.fechaEvento ? '<div class="text-muted small">📅 Evento: ' + new Date(o.fechaEvento + 'T12:00:00').toLocaleDateString('es-PE') + '</div>' : ''}
-                    ${o.notas ? '<div class="text-muted small" style="font-style:italic;">📝 ' + o.notas + '</div>' : ''}
-                    <div class="small mt-1">${o.items.map(i => i.nombre).join(', ')}</div>
-                    <div style="color:var(--gold);font-weight:bold;">S/ ${Number(o.total).toFixed(2)}</div>
+                `).join('');
+            }
+        }
+
+        const users = await this.getAllUsers();
+        const usersList = document.getElementById('admin-users-list');
+        if (usersList) {
+            usersList.innerHTML = users.map(u => `
+                <div class="border-bottom mb-2 pb-2 d-flex justify-content-between align-items-center" style="border-color:#f0e9df!important;">
+                    <div><strong>${u.nombre}</strong><div class="text-muted small">${u.correo}</div></div>
+                    <span class="badge" style="background-color:${u.rol==='admin'?'var(--gold)':'#e2dcd5'};color:${u.rol==='admin'?'white':'var(--brown)'};">${u.rol}</span>
                 </div>
             `).join('');
         }
-        const users = this.getAllUsers();
-        const usersList = document.getElementById('admin-users-list');
-        if (!usersList) return;
-        usersList.innerHTML = users.map(u => `
-            <div class="border-bottom mb-2 pb-2 d-flex justify-content-between align-items-center" style="border-color:#f0e9df!important;">
-                <div><strong>${u.nombre}</strong><div class="text-muted small">${u.email}</div></div>
-                <span class="badge" style="background-color:${u.rol==='admin'?'var(--gold)':'#e2dcd5'};color:${u.rol==='admin'?'white':'var(--brown)'};">${u.rol}</span>
-            </div>
-        `).join('');
     },
 
     _switchTab(tab) {

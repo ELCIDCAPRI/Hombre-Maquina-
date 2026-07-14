@@ -1,102 +1,3 @@
-const catalogoTortas = [
-    {
-        id: "1",
-        nombre: "Elegancia Blanca",
-        descripcion: "Clásico pastel de vainilla con relleno de frutos rojos y cobertura de fondant suizo. Destacando sus características principales, ingredientes y estilo. Ideal para bodas elegantes y celebraciones especiales.",
-        precio: 450.00,
-        imagen: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Frutos Rojos", "Fondant"]
-    },
-    {
-        id: "2",
-        nombre: "Romance Rústico",
-        descripcion: "Naked cake de zanahoria con frosting de queso crema y detalles florales naturales.",
-        precio: 382.00,
-        imagen: "https://images.unsplash.com/photo-1559553156-2e97137af16f?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Zanahoria", "Queso Crema", "Nueces"]
-    },
-    {
-        id: "3",
-        nombre: "Encanto Botánico",
-        descripcion: "Elegante combinación de bizcocho al desnudo y crema texturizada, coronada con un arreglo floral silvestre.",
-        precio: 850.00,
-        imagen: "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Crema Floral", "Frutos del Bosque"]
-    },
-    {
-        id: "4",
-        nombre: "Cascada de Rosas",
-        descripcion: "Majestuoso pastel de 4 pisos con cascada de rosas de azúcar hechas a mano.",
-        precio: 1200.00,
-        imagen: "https://images.unsplash.com/photo-1519340333755-56e9c1d04579?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Red Velvet", "Frambuesa", "Crema de Vainilla"]
-    },
-    {
-        id: "5",
-        nombre: "Boho Dulzura",
-        descripcion: "Un diseño rústico de cuatro pisos con acabado semi-naked y drip cake. Su toque distintivo y cálido lo aportan las mini donas espolvoreadas y las ramas de eucalipto fresco.",
-        precio: 480.00,
-        imagen: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Manjar", "Canela"]
-    },
-    {
-        id: "6",
-        nombre: "Ilusión Floral",
-        descripcion: "Diseño de vanguardia con efecto flotante. Destaca por su cámara central transparente que encapsula lirios blancos, contrastando con la pureza del acabado liso y bordes de perlas.",
-        precio: 650.00,
-        imagen: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Limón", "Almendras", "Maracuyá"]
-    },
-    {
-        id: "7",
-        nombre: "Delicia de Chocolate",
-        descripcion: "Pastel de chocolate belga con relleno de ganache oscuro y frambuesas frescas. Cobertura de espejo brillante con decoración en oro comestible.",
-        precio: 890.00,
-        imagen: "https://images.unsplash.com/photo-1562777717-dc6984f65a63?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Chocolate Belga", "Ganache", "Frambuesa"]
-    },
-    {
-        id: "8",
-        nombre: "Primavera Floral",
-        descripcion: "Pastel primaveral de 3 pisos con buttercream de vainilla y flores frescas de estación.",
-        precio: 560.00,
-        imagen: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Limón", "Arándanos"]
-    },
-    {
-        id: "9",
-        nombre: "Lujo Dorado",
-        descripcion: "Espectacular pastel con aplicaciones de pan de oro 24k, perlas comestibles y flores de azúcar hiperrealistas.",
-        precio: 2500.00,
-        imagen: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Dulce de Leche", "Oro Comestible"]
-    },
-    {
-        id: "10",
-        nombre: "Mini Aventura",
-        descripcion: "Pastel pequeño de 2 pisos con diseño geométrico moderno. Relleno de crema de maracuyá y mango. Perfecto para bodas íntimas.",
-        precio: 290.00,
-        imagen: "https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Maracuyá", "Mango", "Crema Ligera"]
-    },
-    {
-        id: "11",
-        nombre: "Bosque Encantado",
-        descripcion: "Pastel temático con aspecto de tronco de árbol, decorado con hongos de merengue, musgo comestible y flores del bosque.",
-        precio: 1100.00,
-        imagen: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Chocolate", "Avellanas", "Merengue"]
-    },
-    {
-        id: "12",
-        nombre: "Marfil Atemporal",
-        descripcion: "Diseño clásico de 4 pisos con encaje real comestible, perlas y delicadas flores en pasta de goma.",
-        precio: 1800.00,
-        imagen: "https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&q=80&w=600",
-        sabores: ["Vainilla", "Crema de Mantequilla", "Flor de Azahar"]
-    }
-];
-
 const reseñasDemo = [
     { nombre: "María F.", texto: "¡Absolutamente delicioso y hermoso! Superó todas nuestras expectativas.", estrellas: "★ ★ ★ ★ ★" },
     { nombre: "Carlos R.", texto: "La torta superó nuestras expectativas. El sabor y la decoración fueron perfectos para nuestra boda.", estrellas: "★ ★ ★ ★ ★" },
@@ -104,23 +5,41 @@ const reseñasDemo = [
     { nombre: "Andrés G.", texto: "La personalización fue increíble. Lograron exactamente lo que soñábamos.", estrellas: "★ ★ ★ ★ ★" }
 ];
 
+let tortaActual = null; // guardamos la torta cargada para usarla en "Añadir al carrito"
+
+async function cargarTortaDesdeSupabase(id) {
+    const { data, error } = await supabaseClient
+        .from('tortas')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !data) {
+        console.error('Error al cargar la torta:', error);
+        document.getElementById('detail-title').textContent = 'Torta no encontrada';
+        document.getElementById('detail-desc').textContent = 'No pudimos encontrar esta torta. Vuelve al catálogo e intenta de nuevo.';
+        return;
+    }
+
+    tortaActual = data;
+
+    document.getElementById('detail-image').src = data.imagen;
+    document.getElementById('detail-image').alt = data.nombre;
+    document.getElementById('detail-title').textContent = data.nombre;
+    document.getElementById('detail-desc').textContent = data.descripcion;
+    document.getElementById('detail-price').textContent = `S/ ${Number(data.precio_base).toFixed(2)}`;
+
+    // Ya no tenemos columna "sabores" en Supabase, así que ocultamos esa sección por ahora
+    const flavorContainer = document.getElementById('detail-flavors');
+    if (flavorContainer) flavorContainer.innerHTML = '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const cakeId = urlParams.get('id') || "1";
-    const tortaSeleccionada = catalogoTortas.find(t => t.id === cakeId);
+    const cakeId = urlParams.get('id');
 
-    if (tortaSeleccionada) {
-        document.getElementById('detail-image').src = tortaSeleccionada.imagen;
-        document.getElementById('detail-image').alt = tortaSeleccionada.nombre;
-        document.getElementById('detail-title').textContent = tortaSeleccionada.nombre;
-        document.getElementById('detail-desc').textContent = tortaSeleccionada.descripcion;
-        document.getElementById('detail-price').textContent = `S/ ${tortaSeleccionada.precio.toFixed(2)}`;
-
-        const flavorContainer = document.getElementById('detail-flavors');
-        flavorContainer.innerHTML = '';
-        tortaSeleccionada.sabores.forEach(sabor => {
-            flavorContainer.innerHTML += `<span class="flavor-tag">${sabor}</span>`;
-        });
+    if (cakeId) {
+        cargarTortaDesdeSupabase(cakeId);
     }
 
     const reviewsContainer = document.getElementById('reviews-container');
@@ -141,3 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     });
 });
+
+function agregarAlCarrito() {
+    if (!tortaActual) return;
+    Cart.addItem({
+        tortaId: tortaActual.id, // uuid real de Supabase, lo vamos a necesitar para guardar el pedido
+        nombre: tortaActual.nombre,
+        precio: tortaActual.precio_base,
+        imagen: tortaActual.imagen
+    });
+}
