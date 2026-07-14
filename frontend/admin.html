@@ -24,7 +24,7 @@
         <div id="admin-code-error" class="text-danger small mb-3 d-none">Código incorrecto</div>
         <button type="submit" class="btn w-100" style="background:#bda57b;color:white;padding:12px;border-radius:8px;font-weight:500;">ENTRAR</button>
       </form>
-      <a href="main/index.html" class="d-inline-block mt-3" style="color:#9c8470;font-size:0.82rem;text-decoration:none;">← Volver al inicio</a>
+      <a href="index.html" class="d-inline-block mt-3" style="color:#9c8470;font-size:0.82rem;text-decoration:none;">← Volver al inicio</a>
     </div>
   </div>
 
@@ -39,35 +39,29 @@
       </div>
 
       <button class="sidebar-link active" data-section="dashboard" onclick="Admin.switchSection('dashboard')">
-        <span class="sidebar-icon">📊</span>
-        <span>Dashboard</span>
+        <span class="sidebar-icon">📊</span><span>Dashboard</span>
       </button>
       <button class="sidebar-link" data-section="pedidos" onclick="Admin.switchSection('pedidos')">
-        <span class="sidebar-icon">📦</span>
-        <span>Pedidos</span>
+        <span class="sidebar-icon">📦</span><span>Pedidos</span>
       </button>
       <button class="sidebar-link" data-section="usuarios" onclick="Admin.switchSection('usuarios')">
-        <span class="sidebar-icon">👥</span>
-        <span>Usuarios</span>
+        <span class="sidebar-icon">👥</span><span>Usuarios</span>
       </button>
       <button class="sidebar-link" data-section="resenas" onclick="Admin.switchSection('resenas')">
-        <span class="sidebar-icon">⭐</span>
-        <span>Reseñas</span>
+        <span class="sidebar-icon">⭐</span><span>Reseñas</span>
       </button>
       <button class="sidebar-link" data-section="contactos" onclick="Admin.switchSection('contactos')">
-        <span class="sidebar-icon">✉️</span>
-        <span>Contactos</span>
+        <span class="sidebar-icon">✉️</span><span>Contactos</span>
       </button>
 
       <div class="sidebar-logout">
         <button class="sidebar-link" onclick="Admin.logout()">
-          <span class="sidebar-icon">🚪</span>
-          <span>Salir</span>
+          <span class="sidebar-icon">🚪</span><span>Salir</span>
         </button>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="admin-main">
 
       <!-- Dashboard -->
@@ -77,59 +71,22 @@
           <p>Vista general de tu tienda</p>
         </div>
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-value" id="stat-usuarios">—</div>
-            <div class="stat-label">Usuarios</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">📦</div>
-            <div class="stat-value" id="stat-pedidos">—</div>
-            <div class="stat-label">Pedidos totales</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">⏳</div>
-            <div class="stat-value" id="stat-pendientes">—</div>
-            <div class="stat-label">Pendientes</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">💰</div>
-            <div class="stat-value" id="stat-ingresos">—</div>
-            <div class="stat-label">Ingresos totales</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">⭐</div>
-            <div class="stat-value" id="stat-resenas">—</div>
-            <div class="stat-label">Reseñas</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">✉️</div>
-            <div class="stat-value" id="stat-contactos">—</div>
-            <div class="stat-label">Contactos</div>
-          </div>
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="stat-usuarios">—</div><div class="stat-label">Usuarios</div></div>
+          <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value" id="stat-pedidos">—</div><div class="stat-label">Pedidos totales</div></div>
+          <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="stat-pendientes">—</div><div class="stat-label">Pendientes</div></div>
+          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-ingresos">—</div><div class="stat-label">Ingresos totales</div></div>
+          <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-resenas">—</div><div class="stat-label">Reseñas</div></div>
+          <div class="stat-card"><div class="stat-icon">✉️</div><div class="stat-value" id="stat-contactos">—</div><div class="stat-label">Contactos</div></div>
         </div>
       </div>
 
       <!-- Pedidos -->
       <div id="section-pedidos" class="admin-section d-none">
-        <div class="admin-header">
-          <h1>Pedidos</h1>
-          <p>Todos los pedidos realizados</p>
-        </div>
+        <div class="admin-header"><h1>Pedidos</h1><p>Todos los pedidos realizados</p></div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Usuario</th>
-                <th>Estado</th>
-                <th>Total</th>
-                <th>Fecha</th>
-              </tr>
-            </thead>
-            <tbody id="table-pedidos-body">
-              <tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr>
-            </tbody>
+            <thead><tr><th>#</th><th>Cliente</th><th>Estado</th><th>Total</th><th>Fecha</th></tr></thead>
+            <tbody id="table-pedidos-body"><tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -142,63 +99,52 @@
         </div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Rol</th>
-              </tr>
-            </thead>
-            <tbody id="table-usuarios-body">
-              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
-            </tbody>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th></tr></thead>
+            <tbody id="table-usuarios-body"><tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
           </table>
+        </div>
+
+        <div style="margin-top:24px;">
+          <button onclick="Admin.showCreateAdmin()" class="btn" style="background:#bda57b;color:white;padding:10px 20px;border-radius:8px;font-size:0.88rem;font-weight:500;">+ Crear Administrador</button>
+        </div>
+
+        <div id="create-admin-form" class="d-none" style="margin-top:16px;background:white;border-radius:12px;border:1px solid #f0e9df;padding:20px;max-width:400px;">
+          <h4 style="font-family:'Playfair Display',serif;color:#4d3e35;font-size:1rem;margin-bottom:14px;">Nuevo Administrador</h4>
+          <form onsubmit="Admin._handleCreateAdmin(event)">
+            <div class="mb-2">
+              <input type="text" class="form-control" id="create-admin-name" placeholder="Nombre" required style="border:1px solid #e2dcd5;border-radius:6px;padding:10px;font-size:0.88rem;">
+            </div>
+            <div class="mb-2">
+              <input type="email" class="form-control" id="create-admin-email" placeholder="Email" required style="border:1px solid #e2dcd5;border-radius:6px;padding:10px;font-size:0.88rem;">
+            </div>
+            <div class="mb-2">
+              <input type="text" class="form-control" id="create-admin-pass" placeholder="Contraseña" required style="border:1px solid #e2dcd5;border-radius:6px;padding:10px;font-size:0.88rem;">
+            </div>
+            <div id="create-admin-error" class="text-danger small mb-2 d-none"></div>
+            <div id="create-admin-success" class="text-success small mb-2 d-none"></div>
+            <button type="submit" class="btn w-100" style="background:#4d3e35;color:white;padding:10px;border-radius:6px;font-size:0.85rem;">Crear</button>
+          </form>
         </div>
       </div>
 
       <!-- Reseñas -->
       <div id="section-resenas" class="admin-section d-none">
-        <div class="admin-header">
-          <h1>Reseñas</h1>
-          <p>Opiniones de tus clientes</p>
-        </div>
+        <div class="admin-header"><h1>Reseñas</h1><p>Opiniones de tus clientes</p></div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Autor</th>
-                <th>Calificación</th>
-                <th>Texto</th>
-              </tr>
-            </thead>
-            <tbody id="table-resenas-body">
-              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
-            </tbody>
+            <thead><tr><th>#</th><th>Autor</th><th>Calificación</th><th>Texto</th></tr></thead>
+            <tbody id="table-resenas-body"><tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
           </table>
         </div>
       </div>
 
       <!-- Contactos -->
       <div id="section-contactos" class="admin-section d-none">
-        <div class="admin-header">
-          <h1>Contactos</h1>
-          <p>Mensajes recibidos</p>
-        </div>
+        <div class="admin-header"><h1>Contactos</h1><p>Mensajes recibidos</p></div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Mensaje</th>
-              </tr>
-            </thead>
-            <tbody id="table-contactos-body">
-              <tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr>
-            </tbody>
+            <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Mensaje</th></tr></thead>
+            <tbody id="table-contactos-body"><tr><td colspan="4" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -206,8 +152,7 @@
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="shared/supabase.js"></script>
+  <script src="shared/auth.js"></script>
   <script src="shared/admin.js"></script>
   <script src="shared/accessibility.js"></script>
 

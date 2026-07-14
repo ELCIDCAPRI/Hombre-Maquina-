@@ -1,80 +1,102 @@
 const Auth = {
     _key: 'ts_auth',
+    _usersKey: 'ts_users',
+    _ordersKey: 'ts_orders',
+    _reviewsKey: 'ts_reviews',
+    _contactsKey: 'ts_contacts',
 
-    _hash(str) {
-        let h = 0;
-        for (let i = 0; i < str.length; i++) {
-            h = ((h << 5) - h) + str.charCodeAt(i);
-            h |= 0;
-        }
-        return 'h' + Math.abs(h);
-    },
+    _seedUsers: [
+        { id: 1, nombre: 'Administrador', email: 'admin@gmail.com', password: 'admin123', rol: 'admin' },
+        { id: 2, nombre: 'Maria Lopez', email: 'maria@gmail.com', password: 'maria123', rol: 'cliente' },
+        { id: 3, nombre: 'Carlos Rodriguez', email: 'carlos@gmail.com', password: 'carlos123', rol: 'cliente' },
+        { id: 4, nombre: 'Ana Garcia', email: 'ana@gmail.com', password: 'ana123', rol: 'cliente' },
+        { id: 5, nombre: 'Pedro Sanchez', email: 'pedro@gmail.com', password: 'pedro123', rol: 'cliente' },
+        { id: 6, nombre: 'Lucia Fernandez', email: 'lucia@gmail.com', password: 'lucia123', rol: 'cliente' },
+        { id: 7, nombre: 'Miguel Torres', email: 'miguel@gmail.com', password: 'miguel123', rol: 'cliente' },
+        { id: 8, nombre: 'Sofia Ramirez', email: 'sofia@gmail.com', password: 'sofia123', rol: 'cliente' }
+    ],
+
+    _seedOrders: [
+        { id: 1, usuario_id: 2, items: [{nombre:'Elegancia Blanca', precio:450}], total: 450, estado: 'entregado', fecha: '2026-06-01', cliente: 'Maria Lopez', email: 'maria@gmail.com', telefono: '999111222', direccion: 'Av. Javier Prado 123, San Isidro' },
+        { id: 2, usuario_id: 3, items: [{nombre:'Cascada de Rosas', precio:1200}], total: 1200, estado: 'entregado', fecha: '2026-06-10', cliente: 'Carlos Rodriguez', email: 'carlos@gmail.com', telefono: '988222333', direccion: 'Jr. de la Unión 456, Cercado' },
+        { id: 3, usuario_id: 4, items: [{nombre:'Encanto Botanico', precio:850}], total: 850, estado: 'confirmado', fecha: '2026-07-01', cliente: 'Ana Garcia', email: 'ana@gmail.com', telefono: '977333444', direccion: 'Calle Los Olivos 789, Miraflores' },
+        { id: 4, usuario_id: 5, items: [{nombre:'Delicia de Chocolate', precio:890}], total: 890, estado: 'pendiente', fecha: '2026-07-10', cliente: 'Pedro Sanchez', email: 'pedro@gmail.com', telefono: '966444555', direccion: 'Av. La Marina 321, San Miguel' },
+        { id: 5, usuario_id: 6, items: [{nombre:'Romance Rustico', precio:380},{nombre:'Ilusion Floral', precio:650}], total: 1030, estado: 'en_proceso', fecha: '2026-07-12', cliente: 'Lucia Fernandez', email: 'lucia@gmail.com', telefono: '955555666', direccion: 'Calle Belen 654, Breña' },
+        { id: 6, usuario_id: 2, items: [{nombre:'Lujo Dorado', precio:2500}], total: 2500, estado: 'enviado', fecha: '2026-07-13', cliente: 'Maria Lopez', email: 'maria@gmail.com', telefono: '999111222', direccion: 'Av. Javier Prado 123, San Isidro' },
+        { id: 7, usuario_id: 7, items: [{nombre:'Boho Dulzura', precio:720}], total: 720, estado: 'pendiente', fecha: '2026-07-14', cliente: 'Miguel Torres', email: 'miguel@gmail.com', telefono: '944666777', direccion: 'Jr. Carabaya 987, Cercado' }
+    ],
+
+    _seedReviews: [
+        { id: 1, usuario_id: 2, nombre: 'Maria Lopez', texto: 'El pastel Encanto Botanico fue ESPECTACULAR. Todos los invitados quedaron encantados.', calificacion: 5, fecha: '2026-06-05' },
+        { id: 2, usuario_id: 3, nombre: 'Carlos Rodriguez', texto: 'La Cascada de Rosas supero todas nuestras expectativas. El pan de oro le dio elegancia.', calificacion: 5, fecha: '2026-06-15' },
+        { id: 3, usuario_id: 4, nombre: 'Ana Garcia', texto: 'El pastel fue perfecto para nuestro aniversario. Fondant suizo delicioso.', calificacion: 5, fecha: '2026-07-02' },
+        { id: 4, usuario_id: 5, nombre: 'Pedro Sanchez', texto: 'Buen pastel, bonita presentación. El tiempo de entrega fue un poco largo.', calificacion: 4, fecha: '2026-07-11' },
+        { id: 5, usuario_id: 6, nombre: 'Lucia Fernandez', texto: 'La Ilusion Floral es una obra de arte. Servicio excepcional.', calificacion: 5, fecha: '2026-07-13' }
+    ],
+
+    _seedContacts: [
+        { id: 1, nombre: 'Andrea Morales', email: 'andrea@gmail.com', mensaje: 'Hola, me gustaria hacer un pedido para mi boda en septiembre.', leido: true, fecha: '2026-06-20' },
+        { id: 2, nombre: 'Roberto Diaz', email: 'roberto@gmail.com', mensaje: 'Necesito informacion sobre precios para un pastel de 3 pisos.', leido: true, fecha: '2026-06-25' },
+        { id: 3, nombre: 'Camila Vargas', email: 'camila@gmail.com', mensaje: 'Es posible hacer un pastel personalizado?', leido: false, fecha: '2026-07-01' },
+        { id: 4, nombre: 'Jorge Castillo', email: 'jorge@gmail.com', mensaje: 'Pedido urgente para este fin de semana. 50 personas.', leido: false, fecha: '2026-07-10' },
+        { id: 5, nombre: 'Fernando Reyes', email: 'fernando@gmail.com', mensaje: 'Tienen opciones sin gluten?', leido: false, fecha: '2026-07-13' }
+    ],
 
     init() {
-        // Ya no se crea un admin de prueba en localStorage.
-        // Si necesitas un admin, créalo directo en Supabase (Table Editor) con rol = 'admin'.
+        if (!localStorage.getItem(this._usersKey)) {
+            localStorage.setItem(this._usersKey, JSON.stringify(this._seedUsers));
+        }
+        if (!localStorage.getItem(this._ordersKey)) {
+            localStorage.setItem(this._ordersKey, JSON.stringify(this._seedOrders));
+        }
+        if (!localStorage.getItem(this._reviewsKey)) {
+            localStorage.setItem(this._reviewsKey, JSON.stringify(this._seedReviews));
+        }
+        if (!localStorage.getItem(this._contactsKey)) {
+            localStorage.setItem(this._contactsKey, JSON.stringify(this._seedContacts));
+        }
+    },
+
+    _getUsers() {
+        return JSON.parse(localStorage.getItem(this._usersKey) || '[]');
+    },
+
+    _saveUsers(users) {
+        localStorage.setItem(this._usersKey, JSON.stringify(users));
     },
 
     async register(nombre, email, password) {
         const trimmed = email.trim().toLowerCase();
+        const users = this._getUsers();
 
-        // 1. Verificar si el correo ya existe
-        const { data: existente, error: errorBusqueda } = await supabaseClient
-            .from('usuarios')
-            .select('id')
-            .eq('correo', trimmed)
-            .maybeSingle();
-
-        if (errorBusqueda) {
-            console.error('Error verificando correo:', errorBusqueda);
-            return { ok: false, error: 'Error al verificar el correo. Intenta de nuevo.' };
-        }
-        if (existente) {
+        if (users.find(u => u.email === trimmed)) {
             return { ok: false, error: 'Este correo ya está registrado' };
         }
 
-        // 2. Insertar nuevo usuario
-        const { data, error } = await supabaseClient
-            .from('usuarios')
-            .insert({
-                nombre: nombre.trim(),
-                apellido: '', // ajusta si tu form pide apellido
-                correo: trimmed,
-                telefono: '', // ajusta si tu form pide telefono
-                password: this._hash(password),
-                rol: 'Cliente'
-            })
-            .select()
-            .single();
+        const newUser = {
+            id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+            nombre: nombre.trim(),
+            email: trimmed,
+            password: password,
+            rol: 'cliente'
+        };
 
-        if (error) {
-            console.error('Error al registrar:', error);
-            return { ok: false, error: 'No se pudo completar el registro' };
-        }
+        users.push(newUser);
+        this._saveUsers(users);
 
-        return { ok: true, user: data };
+        return { ok: true, user: { id: newUser.id, nombre: newUser.nombre, email: newUser.email, rol: newUser.rol } };
     },
 
     async login(email, password) {
         const trimmed = email.trim().toLowerCase();
-        const hashed = this._hash(password);
+        const users = this._getUsers();
+        const user = users.find(u => u.email === trimmed && u.password === password);
 
-        const { data: user, error } = await supabaseClient
-            .from('usuarios')
-            .select('*')
-            .eq('correo', trimmed)
-            .eq('password', hashed)
-            .maybeSingle();
-
-        if (error) {
-            console.error('Error al iniciar sesión:', error);
-            return { ok: false, error: 'Error al iniciar sesión. Intenta de nuevo.' };
-        }
         if (!user) {
             return { ok: false, error: 'Correo o contraseña incorrectos' };
         }
 
-        const session = { id: user.id, nombre: user.nombre, email: user.correo, rol: user.rol };
+        const session = { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol };
         localStorage.setItem(this._key, JSON.stringify(session));
         this._notify();
         return { ok: true, user: session };
@@ -91,11 +113,77 @@ const Auth = {
 
     isAdmin() {
         const u = this.getUser();
-        return u && u.rol === 'Admin';
+        return u && u.rol === 'admin';
     },
 
     isLoggedIn() {
         return !!this.getUser();
+    },
+
+    createAdmin(nombre, email, password) {
+        const trimmed = email.trim().toLowerCase();
+        const users = this._getUsers();
+
+        if (users.find(u => u.email === trimmed)) {
+            return { ok: false, error: 'Este correo ya existe' };
+        }
+
+        const newAdmin = {
+            id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+            nombre: nombre.trim(),
+            email: trimmed,
+            password: password,
+            rol: 'admin'
+        };
+
+        users.push(newAdmin);
+        this._saveUsers(users);
+
+        return { ok: true, user: newAdmin };
+    },
+
+    getAllUsers() {
+        return this._getUsers().map(u => ({ id: u.id, nombre: u.nombre, email: u.email, rol: u.rol }));
+    },
+
+    deleteUser(id) {
+        const users = this._getUsers().filter(u => u.id !== id);
+        this._saveUsers(users);
+    },
+
+    updateUserRole(id, newRole) {
+        const users = this._getUsers();
+        const user = users.find(u => u.id === id);
+        if (user) {
+            user.rol = newRole;
+            this._saveUsers(users);
+        }
+    },
+
+    getOrders() {
+        return JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
+    },
+
+    getReviews() {
+        return JSON.parse(localStorage.getItem(this._reviewsKey) || '[]');
+    },
+
+    getContacts() {
+        return JSON.parse(localStorage.getItem(this._contactsKey) || '[]');
+    },
+
+    markContactRead(id) {
+        const contacts = this.getContacts();
+        const c = contacts.find(x => x.id === id);
+        if (c) {
+            c.leido = true;
+            localStorage.setItem(this._contactsKey, JSON.stringify(contacts));
+        }
+    },
+
+    deleteContact(id) {
+        const contacts = this.getContacts().filter(x => x.id !== id);
+        localStorage.setItem(this._contactsKey, JSON.stringify(contacts));
     },
 
     _notify() {
@@ -119,107 +207,68 @@ const Auth = {
         });
     },
 
-    async getAllUsers() {
-        const { data, error } = await supabaseClient
-            .from('usuarios')
-            .select('id, nombre, correo, rol');
-        if (error) {
-            console.error('Error al obtener usuarios:', error);
-            return [];
-        }
-        return data;
-    },
-
     _injectModals() {
-        if (!document.getElementById('authModal')) {
-            const div = document.createElement('div');
-            div.innerHTML = `
-            <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content" style="border-radius:8px;border:none;">
-                  <div class="modal-header border-0 pb-0">
-                    <ul class="nav nav-pills w-100 justify-content-center" id="authTabs" role="tablist">
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link auth-tab active" id="login-tab" data-bs-toggle="pill" data-bs-target="#loginForm" type="button" role="tab" aria-controls="loginForm" aria-selected="true">Iniciar Sesión</button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link auth-tab" id="register-tab" data-bs-toggle="pill" data-bs-target="#registerForm" type="button" role="tab" aria-controls="registerForm" aria-selected="false">Registrarse</button>
-                      </li>
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        if (document.getElementById('authModal')) return;
+
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="border-radius:8px;border:none;">
+              <div class="modal-header border-0 pb-0">
+                <ul class="nav nav-pills w-100 justify-content-center" id="authTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link auth-tab active" id="login-tab" data-bs-toggle="pill" data-bs-target="#loginForm" type="button" role="tab">Iniciar Sesión</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link auth-tab" id="register-tab" data-bs-toggle="pill" data-bs-target="#registerForm" type="button" role="tab">Registrarse</button>
+                  </li>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body px-4 py-3">
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="loginForm" role="tabpanel">
+                    <form onsubmit="Auth._handleLogin(event)">
+                      <div class="mb-3">
+                        <label class="form-label text-muted small">Correo electrónico</label>
+                        <input type="email" class="form-control custom-input" id="login-email" required>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label text-muted small">Contraseña</label>
+                        <input type="password" class="form-control custom-input" id="login-password" required>
+                      </div>
+                      <div id="login-error" class="text-danger small mb-2 d-none"></div>
+                      <button type="submit" class="btn-primary-custom w-100 shadow-sm" style="padding:12px 24px;">ENTRAR</button>
+                    </form>
+                    <p class="text-center text-muted small mt-3 mb-0">¿No tienes cuenta? <a href="#" onclick="Auth._switchTab('register');return false;" style="color:var(--gold);">Regístrate</a></p>
                   </div>
-                  <div class="modal-body px-4 py-3">
-                    <div class="tab-content">
-                      <div class="tab-pane fade show active" id="loginForm" role="tabpanel" aria-labelledby="login-tab">
-                        <form onsubmit="Auth._handleLogin(event)">
-                          <div class="mb-3">
-                            <label for="login-email" class="form-label text-muted small">Correo electrónico</label>
-                            <input type="email" class="form-control custom-input" id="login-email" required autocomplete="email">
-                          </div>
-                          <div class="mb-3">
-                            <label for="login-password" class="form-label text-muted small">Contraseña</label>
-                            <input type="password" class="form-control custom-input" id="login-password" required autocomplete="current-password" minlength="6">
-                          </div>
-                          <div id="login-error" class="text-danger small mb-2 d-none" role="alert"></div>
-                          <button type="submit" class="btn-primary-custom w-100 shadow-sm" style="padding:12px 24px;">ENTRAR</button>
-                        </form>
-                        <p class="text-center text-muted small mt-3 mb-0">¿No tienes cuenta? <a href="#" onclick="Auth._switchTab('register');return false;" style="color:var(--gold);">Regístrate</a></p>
+                  <div class="tab-pane fade" id="registerForm" role="tabpanel">
+                    <form onsubmit="Auth._handleRegister(event)">
+                      <div class="mb-3">
+                        <label class="form-label text-muted small">Nombre completo</label>
+                        <input type="text" class="form-control custom-input" id="reg-name" required>
                       </div>
-                      <div class="tab-pane fade" id="registerForm" role="tabpanel" aria-labelledby="register-tab">
-                        <form onsubmit="Auth._handleRegister(event)">
-                          <div class="mb-3">
-                            <label for="reg-name" class="form-label text-muted small">Nombre completo</label>
-                            <input type="text" class="form-control custom-input" id="reg-name" required autocomplete="name">
-                          </div>
-                          <div class="mb-3">
-                            <label for="reg-email" class="form-label text-muted small">Correo electrónico</label>
-                            <input type="email" class="form-control custom-input" id="reg-email" required autocomplete="email">
-                          </div>
-                          <div class="mb-3">
-                            <label for="reg-password" class="form-label text-muted small">Contraseña (mín. 6 caracteres)</label>
-                            <input type="password" class="form-control custom-input" id="reg-password" required autocomplete="new-password" minlength="6">
-                          </div>
-                          <div id="register-error" class="text-danger small mb-2 d-none" role="alert"></div>
-                          <div id="register-success" class="text-success small mb-2 d-none" role="alert"></div>
-                          <button type="submit" class="btn-primary-custom w-100 shadow-sm" style="padding:12px 24px;">REGISTRARSE</button>
-                        </form>
-                        <p class="text-center text-muted small mt-3 mb-0">¿Ya tienes cuenta? <a href="#" onclick="Auth._switchTab('login');return false;" style="color:var(--gold);">Inicia sesión</a></p>
+                      <div class="mb-3">
+                        <label class="form-label text-muted small">Correo electrónico</label>
+                        <input type="email" class="form-control custom-input" id="reg-email" required>
                       </div>
-                    </div>
+                      <div class="mb-3">
+                        <label class="form-label text-muted small">Contraseña</label>
+                        <input type="password" class="form-control custom-input" id="reg-password" required minlength="4">
+                      </div>
+                      <div id="register-error" class="text-danger small mb-2 d-none"></div>
+                      <div id="register-success" class="text-success small mb-2 d-none"></div>
+                      <button type="submit" class="btn-primary-custom w-100 shadow-sm" style="padding:12px 24px;">REGISTRARSE</button>
+                    </form>
+                    <p class="text-center text-muted small mt-3 mb-0">¿Ya tienes cuenta? <a href="#" onclick="Auth._switchTab('login');return false;" style="color:var(--gold);">Inicia sesión</a></p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="modal fade" id="adminModal" tabindex="-1" aria-labelledby="adminModalTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content" style="border-radius:8px;border:none;">
-                  <div class="modal-header border-0">
-                    <h5 class="mb-0" id="adminModalTitle" style="font-family:'Playfair Display',serif;color:var(--brown);">Panel de Administración</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                  </div>
-                  <div class="modal-body px-4 py-3">
-                    <ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist" style="border-color:#f0e9df;">
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link auth-tab active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#adminOrders" type="button" role="tab" aria-controls="adminOrders" aria-selected="true">Pedidos</button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link auth-tab" id="users-tab" data-bs-toggle="tab" data-bs-target="#adminUsers" type="button" role="tab" aria-controls="adminUsers" aria-selected="false">Usuarios</button>
-                      </li>
-                    </ul>
-                    <div class="tab-content">
-                      <div class="tab-pane fade show active" id="adminOrders" role="tabpanel" aria-labelledby="orders-tab">
-                        <div id="admin-orders-list"><p class="text-muted text-center py-3">Cargando pedidos...</p></div>
-                      </div>
-                      <div class="tab-pane fade" id="adminUsers" role="tabpanel" aria-labelledby="users-tab">
-                        <div id="admin-users-list"><p class="text-muted text-center py-3">Cargando usuarios...</p></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>`;
-            Array.from(div.children).forEach(child => document.body.appendChild(child));
-        }
+          </div>
+        </div>`;
+        Array.from(div.children).forEach(child => document.body.appendChild(child));
     },
 
     async _handleLogin(event) {
@@ -234,7 +283,7 @@ const Auth = {
             document.getElementById('login-password').value = '';
             errorEl.classList.add('d-none');
             const toast = document.getElementById('toast');
-            if (toast) { toast.textContent = '✓ Bienvenido, ' + result.user.nombre; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+            if (toast) { toast.textContent = 'Bienvenido, ' + result.user.nombre; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
         } else {
             errorEl.textContent = result.error;
             errorEl.classList.remove('d-none');
@@ -248,16 +297,10 @@ const Auth = {
         const password = document.getElementById('reg-password').value;
         const errorEl = document.getElementById('register-error');
         const successEl = document.getElementById('register-success');
-        if (password.length < 6) {
-            errorEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
-            errorEl.classList.remove('d-none');
-            successEl.classList.add('d-none');
-            return;
-        }
         const result = await this.register(nombre, email, password);
         if (result.ok) {
             errorEl.classList.add('d-none');
-            successEl.textContent = '✓ Registro exitoso. Ahora puedes iniciar sesión.';
+            successEl.textContent = 'Registro exitoso. Ahora puedes iniciar sesión.';
             successEl.classList.remove('d-none');
             document.getElementById('reg-name').value = '';
             document.getElementById('reg-email').value = '';
@@ -275,55 +318,9 @@ const Auth = {
         if (el && bootstrap.Modal) bootstrap.Modal.getOrCreateInstance(el).show();
     },
 
-    async openAdmin() {
-        const el = document.getElementById('adminModal');
-        if (el && bootstrap.Modal) {
-            bootstrap.Modal.getOrCreateInstance(el).show();
-            await this._loadAdminData();
-        }
-    },
-
-    async _loadAdminData() {
-        const orders = (typeof Cart !== 'undefined' && Cart.getOrders) ? Cart.getOrders() : [];
-        const ordersList = document.getElementById('admin-orders-list');
-        if (ordersList) {
-            if (orders.length === 0) {
-                ordersList.innerHTML = '<p class="text-muted text-center py-3">No hay pedidos registrados</p>';
-            } else {
-                ordersList.innerHTML = orders.reverse().map(o => `
-                    <div class="border-bottom mb-2 pb-2" style="border-color:#f0e9df!important;">
-                        <div class="d-flex justify-content-between">
-                            <strong>${o.cliente}</strong>
-                            <span class="text-muted small">${new Date(o.fecha).toLocaleDateString('es-PE')}</span>
-                        </div>
-                        <div class="text-muted small">${o.email} ${o.telefono ? '· ' + o.telefono : ''}</div>
-                        ${o.direccion ? '<div class="text-muted small">📍 ' + o.direccion + '</div>' : ''}
-                        ${o.fechaEvento ? '<div class="text-muted small">📅 Evento: ' + new Date(o.fechaEvento + 'T12:00:00').toLocaleDateString('es-PE') + '</div>' : ''}
-                        ${o.notas ? '<div class="text-muted small" style="font-style:italic;">📝 ' + o.notas + '</div>' : ''}
-                        <div class="small mt-1">${o.items.map(i => i.nombre).join(', ')}</div>
-                        <div style="color:var(--gold);font-weight:bold;">S/ ${Number(o.total).toFixed(2)}</div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        const users = await this.getAllUsers();
-        const usersList = document.getElementById('admin-users-list');
-        if (usersList) {
-            usersList.innerHTML = users.map(u => `
-                <div class="border-bottom mb-2 pb-2 d-flex justify-content-between align-items-center" style="border-color:#f0e9df!important;">
-                    <div><strong>${u.nombre}</strong><div class="text-muted small">${u.correo}</div></div>
-                    <span class="badge" style="background-color:${u.rol==='admin'?'var(--gold)':'#e2dcd5'};color:${u.rol==='admin'?'white':'var(--brown)'};">${u.rol}</span>
-                </div>
-            `).join('');
-        }
-    },
-
     _switchTab(tab) {
         const trigger = document.getElementById(tab === 'register' ? 'register-tab' : 'login-tab');
-        if (trigger && bootstrap.Tab) {
-            bootstrap.Tab.getOrCreateInstance(trigger).show();
-        }
+        if (trigger && bootstrap.Tab) bootstrap.Tab.getOrCreateInstance(trigger).show();
     }
 };
 

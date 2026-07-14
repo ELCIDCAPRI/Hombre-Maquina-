@@ -42,18 +42,14 @@ const Admin = {
         this._loadDashboard();
     },
 
-    async _loadDashboard() {
-        const [usuarios, pedidos, resenas, contactos] = await Promise.all([
-            this._query('usuarios'),
-            this._query('pedidos'),
-            this._query('resenas'),
-            this._query('contactos')
-        ]);
+    _loadDashboard() {
+        const usuarios = Auth.getAllUsers();
+        const pedidos = Auth.getOrders();
+        const resenas = Auth.getReviews();
+        const contactos = Auth.getContacts();
 
         const totalIngresos = pedidos.reduce((s, p) => s + (p.total || 0), 0);
         const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente').length;
-        const本月 = new Date().getMonth();
-        const pedidosMes = pedidos.filter(p => new Date(p.fecha_creacion || p.created_at).getMonth() ===本月).length;
 
         document.getElementById('stat-usuarios').textContent = usuarios.length;
         document.getElementById('stat-pedidos').textContent = pedidos.length;
@@ -68,19 +64,6 @@ const Admin = {
         this._renderContactos(contactos);
     },
 
-    async _query(table) {
-        const { data, error } = await supabaseClient
-            .from(table)
-            .select('*')
-            .order('id', { ascending: false })
-            .limit(50);
-        if (error) {
-            console.error('Error querying ' + table + ':', error);
-            return [];
-        }
-        return data || [];
-    },
-
     _renderPedidos(pedidos) {
         const el = document.getElementById('table-pedidos-body');
         if (!pedidos.length) {
@@ -90,10 +73,10 @@ const Admin = {
         el.innerHTML = pedidos.map(p => `
             <tr>
                 <td>#${p.id}</td>
-                <td>${p.usuario_id || '—'}</td>
+                <td>${p.cliente || '—'}</td>
                 <td><span class="badge-status badge-${p.estado}">${p.estado}</span></td>
                 <td>S/ ${Number(p.total || 0).toFixed(2)}</td>
-                <td>${this._formatDate(p.fecha_creacion || p.created_at)}</td>
+                <td>${p.fecha || '—'}</td>
             </tr>
         `).join('');
     },
@@ -108,8 +91,8 @@ const Admin = {
             <tr>
                 <td>${u.id}</td>
                 <td>${u.nombre || '—'}</td>
-                <td>${u.correo || u.email || '—'}</td>
-                <td><span class="badge-role">${u.rol || 'Cliente'}</span></td>
+                <td>${u.email || '—'}</td>
+                <td><span class="badge-role ${u.rol === 'admin' ? 'badge-admin' : ''}">${u.rol}</span></td>
             </tr>
         `).join('');
     },
@@ -125,7 +108,7 @@ const Admin = {
                 <td>${r.id}</td>
                 <td>${r.nombre || '—'}</td>
                 <td>${'★'.repeat(r.calificacion || 0)}${'☆'.repeat(5 - (r.calificacion || 0))}</td>
-                <td class="resena-text">${(r.texto || '').substring(0, 60)}...</td>
+                <td class="resena-text">${(r.texto || '').substring(0, 60)}${r.texto && r.texto.length > 60 ? '...' : ''}</td>
             </tr>
         `).join('');
     },
@@ -141,7 +124,7 @@ const Admin = {
                 <td>${c.id}</td>
                 <td>${c.nombre || '—'}</td>
                 <td>${c.email || '—'}</td>
-                <td class="resena-text">${(c.mensaje || '').substring(0, 60)}...</td>
+                <td class="resena-text">${(c.mensaje || '').substring(0, 60)}${c.mensaje && c.mensaje.length > 60 ? '...' : ''}</td>
             </tr>
         `).join('');
     },
@@ -151,14 +134,48 @@ const Admin = {
         document.querySelectorAll('.admin-section').forEach(el => el.classList.add('d-none'));
         document.getElementById('section-' + section).classList.remove('d-none');
         document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-        document.querySelector(`[data-section="${section}"]`).classList.add('active');
+        const link = document.querySelector(`[data-section="${section}"]`);
+        if (link) link.classList.add('active');
     },
 
-    _formatDate(dateStr) {
-        if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('es-PE', {
-            day: '2-digit', month: 'short', year: 'numeric'
-        });
+    showCreateAdmin() {
+        document.getElementById('create-admin-form').classList.toggle('d-none');
+        document.getElementById('create-admin-name').value = '';
+        document.getElementById('create-admin-email').value = '';
+        document.getElementById('create-admin-pass').value = '';
+        document.getElementById('create-admin-error').classList.add('d-none');
+        document.getElementById('create-admin-success').classList.add('d-none');
+    },
+
+    _handleCreateAdmin(event) {
+        event.preventDefault();
+        const nombre = document.getElementById('create-admin-name').value.trim();
+        const email = document.getElementById('create-admin-email').value.trim();
+        const pass = document.getElementById('create-admin-pass').value.trim();
+        const errorEl = document.getElementById('create-admin-error');
+        const successEl = document.getElementById('create-admin-success');
+
+        if (!nombre || !email || !pass) {
+            errorEl.textContent = 'Completa todos los campos.';
+            errorEl.classList.remove('d-none');
+            return;
+        }
+
+        const result = Auth.createAdmin(nombre, email, pass);
+        if (result.ok) {
+            successEl.textContent = 'Administrador "' + nombre + '" creado correctamente.';
+            successEl.classList.remove('d-none');
+            errorEl.classList.add('d-none');
+            document.getElementById('create-admin-name').value = '';
+            document.getElementById('create-admin-email').value = '';
+            document.getElementById('create-admin-pass').value = '';
+            this._renderUsuarios(Auth.getAllUsers());
+            this._loadDashboard();
+        } else {
+            successEl.classList.add('d-none');
+            errorEl.textContent = result.error;
+            errorEl.classList.remove('d-none');
+        }
     }
 };
 
