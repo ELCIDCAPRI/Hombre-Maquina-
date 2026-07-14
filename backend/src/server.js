@@ -12,6 +12,8 @@ const pedidosRoutes = require('./routes/pedidos');
 const resenasRoutes = require('./routes/resenas');
 const contactosRoutes = require('./routes/contactos');
 const personalizacionesRoutes = require('./routes/personalizaciones');
+const categoriasRoutes = require('./routes/categorias');
+const statsRoutes = require('./routes/stats');
 
 const app = express();
 
@@ -48,6 +50,8 @@ app.use('/api/pedidos', pedidosRoutes);
 app.use('/api/resenas', resenasRoutes);
 app.use('/api/contactos', contactosRoutes);
 app.use('/api/personalizaciones', personalizacionesRoutes);
+app.use('/api/categorias', categoriasRoutes);
+app.use('/api/stats', statsRoutes);
 
 // ─── Health check ────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

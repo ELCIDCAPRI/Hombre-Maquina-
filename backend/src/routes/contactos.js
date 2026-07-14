@@ -47,4 +47,63 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// GET /api/contactos/stats — admin: contact statistics
+router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const [total] = await pool.query('SELECT COUNT(*) AS total FROM contactos');
+    const [leidos] = await pool.query('SELECT COUNT(*) AS total FROM contactos WHERE leido = TRUE');
+    const [noLeidos] = await pool.query('SELECT COUNT(*) AS total FROM contactos WHERE leido = FALSE');
+
+    return res.json({
+      ok: true,
+      stats: {
+        total: total[0].total,
+        leidos: leidos[0].total,
+        noLeidos: noLeidos[0].total,
+      },
+    });
+  } catch (err) {
+    console.error('Error en stats de contactos:', err);
+    return res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+// PATCH /api/contactos/:id/leido — admin: toggle read status
+router.patch('/:id/leido', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await pool.query('SELECT id, leido FROM contactos WHERE id = ?', [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ ok: false, error: 'Contacto no encontrado' });
+    }
+
+    const nuevoEstado = !existing[0].leido;
+    await pool.query('UPDATE contactos SET leido = ? WHERE id = ?', [nuevoEstado, id]);
+
+    return res.json({ ok: true, leido: nuevoEstado });
+  } catch (err) {
+    console.error('Error al actualizar contacto:', err);
+    return res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
+// DELETE /api/contactos/:id — admin: delete contact
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await pool.query('SELECT id FROM contactos WHERE id = ?', [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ ok: false, error: 'Contacto no encontrado' });
+    }
+
+    await pool.query('DELETE FROM contactos WHERE id = ?', [id]);
+    return res.json({ ok: true, message: 'Contacto eliminado' });
+  } catch (err) {
+    console.error('Error al eliminar contacto:', err);
+    return res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
+
 module.exports = router;

@@ -217,11 +217,7 @@ const Auth = {
     },
 
     openAdmin() {
-        const el = document.getElementById('adminModal');
-        if (el && bootstrap.Modal) {
-            bootstrap.Modal.getOrCreateInstance(el).show();
-            this._loadAdminData();
-        }
+        window.location.href = '/admin/admin.html';
     },
 
     async _loadAdminData() {

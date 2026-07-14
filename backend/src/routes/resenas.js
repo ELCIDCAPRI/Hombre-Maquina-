@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const pool = require('../config/db');
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -55,5 +55,23 @@ router.post(
     }
   }
 );
+
+// DELETE /api/resenas/:id — admin: delete review
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await pool.query('SELECT id FROM resenas WHERE id = ?', [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ ok: false, error: 'Reseña no encontrada' });
+    }
+
+    await pool.query('DELETE FROM resenas WHERE id = ?', [id]);
+    return res.json({ ok: true, message: 'Reseña eliminada' });
+  } catch (err) {
+    console.error('Error al eliminar reseña:', err);
+    return res.status(500).json({ ok: false, error: 'Error interno del servidor' });
+  }
+});
 
 module.exports = router;
