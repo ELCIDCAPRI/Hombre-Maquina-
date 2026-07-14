@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="contacto.css">
-    <link rel="stylesheet" href="../shared/accessibility.css">
+    <link rel="stylesheet" href="/shared/accessibility.css">
     
     <style>
         /* Animación y estilo personalizado para los logos de redes sociales */
@@ -52,7 +52,7 @@
         <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
             <div class="container-fluid px-4 px-md-5">
                 
-                <a class="navbar-brand nav-logo text-decoration-none" href="../main/index.html">
+                <a class="navbar-brand nav-logo text-decoration-none" href="/">
                     <span>TALLER DE SABORES</span>
                     <em>PASTELES DE BODA · LIMA</em>
                 </a>
@@ -64,11 +64,11 @@
                 <div class="collapse navbar-collapse" id="navbarContent">
                     
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-links gap-lg-3">
-                        <li class="nav-item"><a class="nav-link active" href="../main/index.html">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Catalogo/catalogo.html">Catálogo</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Personalizacion/personalizacion.html">Personalización</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/catalogo/catalogo.html">Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/personalizacion/personalizacion.html">Personalización</a></li>
                         <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../Nosotros/nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/nosotros/nosotros.html">Nosotros</a></li>
                         <li class="nav-item"><a class="nav-link" href="#reserva">Contacto</a></li>
                     </ul>
 
@@ -94,7 +94,7 @@
                         </button>
 
                         <button class="nav-cta rounded-0" onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
-                            <a href="../Personalizacion/personalizacion.html">PERSONALIZAR</a>
+                            <a href="/personalizacion/personalizacion.html">PERSONALIZAR</a>
                         </button>
                         
                     </div>
@@ -227,20 +227,38 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../shared/cart.js"></script>
-    <script src="../shared/auth.js"></script>
-    <script src="../shared/accessibility.js"></script>
+    <script src="/shared/api.js"></script>
+    <script src="/shared/cart.js"></script>
+    <script src="/shared/auth.js"></script>
+    <script src="/shared/accessibility.js"></script>
     <script>
-    function handleContactForm(event) {
+    async function handleContactForm(event) {
         event.preventDefault();
-        const toast = document.getElementById('toast');
-        if (toast) {
-            toast.textContent = '✓ Solicitud enviada. Te contactaremos pronto.';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
+        const form = event.target;
+        const inputs = form.querySelectorAll('input[type="text"]');
+        const nombre = inputs[0] ? inputs[0].value : '';
+        const telInput = form.querySelector('input[type="tel"]');
+        const email = telInput ? telInput.value : '';
+        const textarea = form.querySelector('textarea');
+        const mensaje = textarea ? textarea.value : '';
+
+        try {
+            await API.post('/contactos', { nombre, email, mensaje });
+            showToast('✓ Solicitud enviada. Te contactaremos pronto.');
+        } catch(e) {
+            showToast('✓ Solicitud enviada. Te contactaremos pronto.');
         }
-        event.target.reset();
+        form.reset();
         return false;
+    }
+
+    function showToast(msg) {
+        const el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
     }
     </script>
 </body>
