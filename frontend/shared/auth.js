@@ -43,18 +43,18 @@ const Auth = {
     ],
 
     init() {
-        if (!localStorage.getItem(this._usersKey)) {
-            localStorage.setItem(this._usersKey, JSON.stringify(this._seedUsers));
-        }
-        if (!localStorage.getItem(this._ordersKey)) {
-            localStorage.setItem(this._ordersKey, JSON.stringify(this._seedOrders));
-        }
-        if (!localStorage.getItem(this._reviewsKey)) {
-            localStorage.setItem(this._reviewsKey, JSON.stringify(this._seedReviews));
-        }
-        if (!localStorage.getItem(this._contactsKey)) {
-            localStorage.setItem(this._contactsKey, JSON.stringify(this._seedContacts));
-        }
+        const seed = (key, data) => {
+            const raw = localStorage.getItem(key);
+            let arr = [];
+            try { arr = JSON.parse(raw); } catch(e) {}
+            if (!raw || !Array.isArray(arr) || arr.length === 0) {
+                localStorage.setItem(key, JSON.stringify(data));
+            }
+        };
+        seed(this._usersKey, this._seedUsers);
+        seed(this._ordersKey, this._seedOrders);
+        seed(this._reviewsKey, this._seedReviews);
+        seed(this._contactsKey, this._seedContacts);
     },
 
     _getUsers() {

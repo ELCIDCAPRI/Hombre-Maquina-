@@ -68,54 +68,62 @@ const Admin = {
 
     // ===================== CHART =====================
 
+    _toLocalDateStr(y, m, d) {
+        return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    },
+
+    _parseFecha(fecha) {
+        const parts = (fecha || '').split('-');
+        return { y: parseInt(parts[0]) || 0, m: (parseInt(parts[1]) || 1) - 1, d: parseInt(parts[2]) || 1 };
+    },
+
     _renderChart(filter) {
         this._chartFilter = filter;
         document.querySelectorAll('.chart-filter').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
 
         const pedidos = Auth.getOrders();
         const now = new Date();
+        const cy = now.getFullYear();
+        const cm = now.getMonth();
         let labels = [];
         let counts = [];
 
         if (filter === 'semana') {
-            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            const startOfWeek = new Date(now);
-            startOfWeek.setDate(now.getDate() - now.getDay());
-            startOfWeek.setHours(0, 0, 0, 0);
+            const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const start = new Date(cy, cm, now.getDate() - now.getDay());
             for (let i = 0; i < 7; i++) {
-                const d = new Date(startOfWeek);
-                d.setDate(startOfWeek.getDate() + i);
-                labels.push(days[d.getDay()]);
-                const dateStr = d.toISOString().split('T')[0];
-                counts.push(pedidos.filter(p => p.fecha === dateStr).length);
+                const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+                labels.push(dayNames[d.getDay()]);
+                const key = this._toLocalDateStr(d.getFullYear(), d.getMonth(), d.getDate());
+                counts.push(pedidos.filter(p => p.fecha === key).length);
             }
         } else if (filter === 'mes') {
-            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const daysInMonth = new Date(cy, cm + 1, 0).getDate();
             for (let i = 1; i <= daysInMonth; i++) {
                 labels.push(i);
-                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                counts.push(pedidos.filter(p => p.fecha === dateStr).length);
+                const key = this._toLocalDateStr(cy, cm, i);
+                counts.push(pedidos.filter(p => p.fecha === key).length);
             }
         } else if (filter === 'trimestre') {
             const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            const startMonth = now.getMonth() - 2 < 0 ? now.getMonth() - 2 + 12 : now.getMonth() - 2;
-            const startYear = now.getMonth() - 2 < 0 ? now.getFullYear() - 1 : now.getFullYear();
-            for (let i = 0; i < 3; i++) {
-                const m = (startMonth + i) % 12;
-                const y = startMonth + i >= 12 ? startYear + 1 : startYear;
-                labels.push(months[m] + ' ' + String(y).slice(-2));
-                counts.push(pedidos.filter(p => {
-                    const pd = new Date(p.fecha);
-                    return pd.getMonth() === m && pd.getFullYear() === y;
-                }).length);
+            for (let i = 2; i >= 0; i--) {
+                let m = cm - i;
+                let y = cy;
+                while (m < 0) { m += 12; y--; }
+                const idx = 2 - i;
+                labels[idx] = months[m] + ' ' + String(y).slice(-2);
+                counts[idx] = pedidos.filter(p => {
+                    const fd = this._parseFecha(p.fecha);
+                    return fd.m === m && fd.y === y;
+                }).length;
             }
         } else {
             const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
             for (let m = 0; m < 12; m++) {
                 labels.push(months[m]);
                 counts.push(pedidos.filter(p => {
-                    const pd = new Date(p.fecha);
-                    return pd.getMonth() === m && pd.getFullYear() === now.getFullYear();
+                    const fd = this._parseFecha(p.fecha);
+                    return fd.m === m && fd.y === cy;
                 }).length);
             }
         }
@@ -125,7 +133,7 @@ const Admin = {
         container.innerHTML = labels.map((label, i) => {
             const height = Math.round((counts[i] / max) * 100);
             return `<div class="chart-col">
-                <div class="chart-bar" style="height:${height}%">
+                <div class="chart-bar" style="height:${Math.max(height, 2)}%">
                     <span class="chart-bar-value">${counts[i]}</span>
                 </div>
                 <span class="chart-bar-label">${label}</span>
