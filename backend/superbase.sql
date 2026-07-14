@@ -26,8 +26,12 @@ CREATE TABLE usuarios (
 ) ENGINE=InnoDB;
 
 -- Admin: admin@gmail.com / admin123
+-- Cliente 1: maria@gmail.com / maria123
+-- Cliente 2: carlos@gmail.com / carlos123
 INSERT INTO usuarios (nombre, email, password, rol) VALUES
-    ('Administrador', 'admin@gmail.com', '$2a$10$hZiqU1tCjZKRFxaKLHZnRe6IjBM83xPT6WW8hCumDfdt8qjb.MpZm', 'admin');
+    ('Administrador', 'admin@gmail.com', '$2a$10$hZiqU1tCjZKRFxaKLHZnRe6IjBM83xPT6WW8hCumDfdt8qjb.MpZm', 'admin'),
+    ('Maria Lopez', 'maria@gmail.com', '$2a$10$lQT2oSonj885FqrmnEsXDOMlNpUl/foQ6slQxWSAzTHPr4tn/H8B6', 'cliente'),
+    ('Carlos Rodriguez', 'carlos@gmail.com', '$2a$10$Zl8f/zoAERgekx0MOuu2du3Irfqv7MR8IP44VujNibQvLb7V5ztbG', 'cliente');
 
 -- =============================================================
 -- 2. CATEGORÍAS
