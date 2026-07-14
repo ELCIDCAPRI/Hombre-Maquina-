@@ -15,6 +15,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../shared/accessibility.css">
+  <link rel="stylesheet" href="../shared/orders.css">
 </head>
 
 <body>
@@ -50,6 +51,9 @@
 
                         <div class="auth-logged-in d-none align-items-center gap-2">
                             <span class="auth-user-name text-muted" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                            <button class="auth-btn bg-transparent border-0 p-1" onclick="MyOrders.open()" aria-label="Mis Pedidos" title="Mis Pedidos">
+                                <span class="fs-6" style="line-height:1;">📦</span>
+                            </button>
                             <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Admin" title="Admin">
                                 <span class="fs-6" style="line-height:1;">⚙️</span>
                             </button>
@@ -223,6 +227,7 @@
 <script src="../shared/cart.js"></script>
 <script src="../shared/auth.js"></script>
 <script src="../shared/accessibility.js"></script>
+<script src="../shared/orders.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
