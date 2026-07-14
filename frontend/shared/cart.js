@@ -136,7 +136,7 @@ const Cart = {
 
         try {
             await API.post('/pedidos', {
-                items: items.map(i => ({ nombre: i.nombre, precio: i.precio, detalles: i.detalles })),
+                items: items.map(i => ({ pastel_id: i.pastel_id || i.id || null, nombre: i.nombre, precio: i.precio, cantidad: 1 })),
                 total,
                 cliente: nombre,
                 email,

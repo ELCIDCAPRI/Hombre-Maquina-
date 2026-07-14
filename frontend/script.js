@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reviewsGrid = document.getElementById('reviews-grid');
 
     try {
-        const featured = await API.get('/productos/featured');
+        const data = await API.get('/productos/featured');
+        const featured = data.productos || [];
         featured.forEach(torta => {
             const col = document.createElement('div');
             col.className = 'col-md-4';
@@ -54,7 +55,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const reviews = await API.get('/resenas');
+        const data = await API.get('/resenas');
+        const reviews = data.resenas || [];
         reviews.forEach(r => {
             const col = document.createElement('div');
             col.className = 'col-md-4';

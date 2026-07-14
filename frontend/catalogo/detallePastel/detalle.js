@@ -3,19 +3,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cakeId = urlParams.get('id') || "1";
 
     try {
-        const cake = await API.get('/productos/' + cakeId);
-        document.getElementById('detail-image').src = cake.image || cake.imagen || '';
-        document.getElementById('detail-image').alt = cake.name || cake.nombre || '';
-        document.getElementById('detail-title').textContent = cake.name || cake.nombre || '';
-        document.getElementById('detail-desc').textContent = cake.description || cake.descripcion || '';
-        document.getElementById('detail-price').textContent = `S/ ${(cake.price || cake.precio || 0).toFixed(2)}`;
+        const data = await API.get('/productos/' + cakeId);
+        const cake = data.producto || data;
+        document.getElementById('detail-image').src = cake.imagen_url || cake.image || cake.imagen || '';
+        document.getElementById('detail-image').alt = cake.nombre || cake.name || '';
+        document.getElementById('detail-title').textContent = cake.nombre || cake.name || '';
+        document.getElementById('detail-desc').textContent = cake.descripcion || cake.description || '';
+        document.getElementById('detail-price').textContent = `S/ ${(cake.precio || cake.price || 0).toFixed(2)}`;
 
         const sabores = cake.sabores || [];
         const flavorContainer = document.getElementById('detail-flavors');
         flavorContainer.innerHTML = '';
-        sabores.forEach(sabor => {
-            flavorContainer.innerHTML += `<span class="flavor-tag">${sabor}</span>`;
-        });
+        if (sabores.length > 0) {
+            sabores.forEach(sabor => {
+                flavorContainer.innerHTML += `<span class="flavor-tag">${sabor}</span>`;
+            });
+        } else {
+            flavorContainer.innerHTML = `<span class="flavor-tag">${cake.estilo || cake.style || ''}</span><span class="flavor-tag">${cake.tamaño || cake.size || ''}</span>`;
+        }
     } catch(e) {
         console.error('Error al cargar producto:', e);
     }
@@ -23,7 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reviewsContainer = document.getElementById('reviews-container');
     reviewsContainer.innerHTML = '';
     try {
-        const reviews = await API.get('/resenas');
+        const data = await API.get('/resenas');
+        const reviews = data.resenas || [];
         reviews.forEach(reseña => {
             const initial = (reseña.nombre || 'U').charAt(0);
             reviewsContainer.innerHTML += `

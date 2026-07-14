@@ -51,8 +51,8 @@ function applyFilters() {
             (c.description || c.descripcion || '').toLowerCase().includes(term)
         );
     }
-    if (styleVal !== 'all') filtered = filtered.filter(c => c.style === styleVal);
-    if (sizeVal !== 'all') filtered = filtered.filter(c => c.size === sizeVal);
+    if (styleVal !== 'all') filtered = filtered.filter(c => c.estilo === styleVal);
+    if (sizeVal !== 'all') filtered = filtered.filter(c => c.tamaño === sizeVal);
     if (priceVal !== 'all') {
         filtered = filtered.filter(c => {
             const price = c.price || c.precio || 0;
@@ -178,7 +178,8 @@ searchClear.addEventListener('click', function () {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        cakes = await API.get('/productos');
+        const data = await API.get('/productos');
+        cakes = data.productos || [];
     } catch(e) {
         console.error('Error al cargar productos:', e);
     }
