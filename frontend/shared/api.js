@@ -47,6 +47,37 @@ const api = {
         return res.json();
     },
 
+    async put(path, body) {
+        const headers = { 'Content-Type': 'application/json' };
+        const token = this.getToken();
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(err.message || 'Error en la solicitud');
+        }
+        return res.json();
+    },
+
+    async delete(path) {
+        const headers = {};
+        const token = this.getToken();
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + path, {
+            method: 'DELETE',
+            headers
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(err.message || 'Error en la solicitud');
+        }
+        return res.json();
+    },
+
     getToken() {
         return localStorage.getItem('ts_token');
     },
