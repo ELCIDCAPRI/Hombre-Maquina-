@@ -128,3 +128,5 @@ function updateSummary() {
     const total = state.pisos.precio + state.sabor.precio + state.relleno.precio + state.decoracion.precio;
     document.getElementById('sum-total').textContent = `S/ ${total.toFixed(2)}`;
 }
+
+

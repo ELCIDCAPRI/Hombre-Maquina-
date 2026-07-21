@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador — Taller de Sabores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/admin.css">
+  <link rel="stylesheet" href="shared/accessibility.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="admin-login" class="admin-login-wrapper d-none">
+    <div class="admin-login-card">
+      <div class="admin-login-icon">🔐</div>
+      <h2>Panel de Administración</h2>
+      <p>Ingresa el código de acceso para continuar</p>
+      <form onsubmit="return Admin._handleCode(event)">
+        <div class="mb-3">
+          <input type="password" class="form-control" id="admin-code-input" placeholder="•••" maxlength="10" autocomplete="off" autofocus>
+        </div>
+        <div id="admin-code-error" class="text-danger small mb-3 d-none">Código incorrecto</div>
+        <button type="submit" class="btn w-100" style="background:#bda57b;color:white;padding:12px;border-radius:8px;font-weight:500;">ENTRAR</button>
+      </form>
+      <a href="index.html" class="d-inline-block mt-3" style="color:#9c8470;font-size:0.82rem;text-decoration:none;">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" class="admin-dashboard d-none">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-brand">
+        <h3>Taller de Sabores</h3>
+        <small>Administración</small>
+      </div>
+
+      <button class="sidebar-link active" data-section="dashboard" onclick="Admin.switchSection('dashboard')">
+        <span class="sidebar-icon">📊</span><span>Dashboard</span>
+      </button>
+      <button class="sidebar-link" data-section="pedidos" onclick="Admin.switchSection('pedidos')">
+        <span class="sidebar-icon">📦</span><span>Pedidos</span>
+      </button>
+      <button class="sidebar-link" data-section="usuarios" onclick="Admin.switchSection('usuarios')">
+        <span class="sidebar-icon">👥</span><span>Usuarios</span>
+      </button>
+      <button class="sidebar-link" data-section="resenas" onclick="Admin.switchSection('resenas')">
+        <span class="sidebar-icon">⭐</span><span>Reseñas</span>
+      </button>
+      <button class="sidebar-link" data-section="contactos" onclick="Admin.switchSection('contactos')">
+        <span class="sidebar-icon">✉️</span><span>Contactos</span>
+      </button>
+
+      <div class="sidebar-logout">
+        <button class="sidebar-link" onclick="Admin.logout()">
+          <span class="sidebar-icon">🚪</span><span>Salir</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+      <!-- Dashboard -->
+      <div id="section-dashboard" class="admin-section">
+        <div class="admin-header">
+          <h1>Dashboard</h1>
+          <p>Vista general de tu tienda</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="stat-usuarios">—</div><div class="stat-label">Usuarios</div></div>
+          <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value" id="stat-pedidos">—</div><div class="stat-label">Pedidos totales</div></div>
+          <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="stat-pendientes">—</div><div class="stat-label">Pendientes</div></div>
+          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-ingresos">—</div><div class="stat-label">Ingresos totales</div></div>
+          <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-resenas">—</div><div class="stat-label">Reseñas</div></div>
+          <div class="stat-card"><div class="stat-icon">✉️</div><div class="stat-value" id="stat-contactos">—</div><div class="stat-label">Contactos</div></div>
+        </div>
+
+        <div class="chart-wrapper">
+          <div class="chart-header">
+            <h3>Pedidos por período</h3>
+            <div class="chart-filters">
+              <button class="chart-filter active" data-filter="semana" onclick="Admin._renderChart('semana')">Semana</button>
+              <button class="chart-filter" data-filter="mes" onclick="Admin._renderChart('mes')">Mes</button>
+              <button class="chart-filter" data-filter="trimestre" onclick="Admin._renderChart('trimestre')">Trimestre</button>
+              <button class="chart-filter" data-filter="año" onclick="Admin._renderChart('año')">Año</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div id="chart-bars" class="chart-bars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pedidos -->
+      <div id="section-pedidos" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Pedidos</h1>
+          <p>Gestiona los pedidos de tu tienda</p>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Cliente</th><th>Email</th><th>Estado</th><th>Total</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="table-pedidos-body"><tr><td colspan="7" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Usuarios -->
+      <div id="section-usuarios" class="admin-section d-none">
+        <div class="admin-header">
+          <h1>Usuarios</h1>
+          <p>Todos los usuarios registrados</p>
+        </div>
+        <div class="admin-toolbar">
+          <button onclick="Admin.showCreateUser()" class="btn btn-admin-primary">+ Crear Usuario</button>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Contraseña</th><th>Rol</th><th>Acciones</th></tr></thead>
+            <tbody id="table-usuarios-body"><tr><td colspan="6" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+
+        <div id="create-user-form" class="admin-form-panel d-none">
+          <h4>Nuevo Usuario</h4>
+          <form onsubmit="Admin._handleCreateUser(event)">
+            <div class="form-row">
+              <input type="text" id="create-user-name" placeholder="Nombre" required>
+              <input type="email" id="create-user-email" placeholder="Email" required>
+            </div>
+            <div class="form-row">
+              <input type="text" id="create-user-pass" placeholder="Contraseña" required>
+              <select id="create-user-role">
+                <option value="cliente">Cliente</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div id="create-user-error" class="text-danger small mb-2 d-none"></div>
+            <div id="create-user-success" class="text-success small mb-2 d-none"></div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-admin-primary">Crear</button>
+              <button type="button" class="btn btn-admin-secondary" onclick="Admin.hideCreateUser()">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Reseñas -->
+      <div id="section-resenas" class="admin-section d-none">
+        <div class="admin-header"><h1>Reseñas</h1><p>Opiniones de tus clientes</p></div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Autor</th><th>Calificación</th><th>Texto</th><th>Fecha</th></tr></thead>
+            <tbody id="table-resenas-body"><tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contactos -->
+      <div id="section-contactos" class="admin-section d-none">
+        <div class="admin-header"><h1>Contactos</h1><p>Mensajes recibidos</p></div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Mensaje</th><th>Leído</th></tr></thead>
+            <tbody id="table-contactos-body"><tr><td colspan="5" class="text-center text-muted py-4">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="border-radius:12px;border:none;">
+        <div class="modal-header border-0">
+          <h5 style="font-family:'Playfair Display',serif;color:#4d3e35;">Editar Usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form onsubmit="Admin._handleEditUser(event)">
+            <input type="hidden" id="edit-user-id">
+            <div class="mb-2">
+              <label class="form-label small text-muted">Nombre</label>
+              <input type="text" class="form-control" id="edit-user-name" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">Email</label>
+              <input type="email" class="form-control" id="edit-user-email" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">Contraseña</label>
+              <input type="text" class="form-control" id="edit-user-pass" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-muted">Rol</label>
+              <select class="form-select" id="edit-user-role">
+                <option value="cliente">Cliente</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div id="edit-user-error" class="text-danger small mb-2 d-none"></div>
+            <button type="submit" class="btn btn-admin-primary w-100">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content" style="border-radius:12px;border:none;">
+        <div class="modal-body text-center" style="padding:32px;">
+          <div style="font-size:2.5rem;margin-bottom:12px;">⚠️</div>
+          <h5 style="font-family:'Playfair Display',serif;color:#4d3e35;" id="confirm-delete-title">¿Eliminar?</h5>
+          <p class="text-muted small" id="confirm-delete-msg">Esta acción no se puede deshacer.</p>
+          <div id="confirm-delete-error" class="text-danger small mb-2 d-none"></div>
+          <div class="d-flex gap-2 justify-content-center">
+            <button class="btn btn-admin-danger" id="confirm-delete-btn">Eliminar</button>
+            <button class="btn btn-admin-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="admin-toast" class="admin-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="shared/auth.js"></script>
+  <script src="shared/admin.js"></script>
+  <script src="shared/accessibility.js"></script>
+
+  <script>
+    Admin._handleCode = function(e) {
+      e.preventDefault();
+      const code = document.getElementById('admin-code-input').value;
+      const errorEl = document.getElementById('admin-code-error');
+      if (!Admin.authenticate(code)) {
+        errorEl.classList.remove('d-none');
+        document.getElementById('admin-code-input').value = '';
+        document.getElementById('admin-code-input').focus();
+      }
+    };
+  </script>
+</body>
+</html>

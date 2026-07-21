@@ -13,8 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="/shared/accessibility.css">
+  <link rel="stylesheet" href="main/styles.css">
+  <link rel="stylesheet" href="shared/accessibility.css">
+  <link rel="stylesheet" href="shared/orders.css">
 </head>
 
 <body>
@@ -38,8 +39,8 @@
                         <li class="nav-item"><a class="nav-link" href="#catalogo-destacado">Catálogo</a></li>
                         <li class="nav-item"><a class="nav-link" href="#personalizar">Personalización</a></li>
                         <li class="nav-item"><a class="nav-link" href="#resenas">Reseñas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/nosotros/nosotros.html">Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/contacto/contacto.html">Contacto</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Nosotros/nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Contacto/contacto.html">Contacto</a></li>
                     </ul>
 
                     <div class="nav-right d-flex align-items-center gap-3 mt-3 mt-lg-0 pb-3 pb-lg-0">
@@ -50,6 +51,9 @@
 
                         <div class="auth-logged-in d-none align-items-center gap-2">
                             <span class="auth-user-name text-muted" style="font-size:0.8rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                            <button class="auth-btn bg-transparent border-0 p-1" onclick="MyOrders.open()" aria-label="Mis Pedidos" title="Mis Pedidos">
+                                <span class="fs-6" style="line-height:1;">📦</span>
+                            </button>
                             <button class="auth-btn bg-transparent border-0 p-1 auth-admin-link d-none" onclick="Auth.openAdmin()" aria-label="Admin" title="Admin">
                                 <span class="fs-6" style="line-height:1;">⚙️</span>
                             </button>
@@ -58,13 +62,17 @@
                             </button>
                         </div>
 
+                        <a href="admin.html" class="d-flex align-items-center gap-1 text-decoration-none" style="color:#9c8470;font-size:0.8rem;" title="Panel de administrador">
+                            <span>⚙️</span><span class="d-none d-lg-inline">Admin</span>
+                        </a>
+
                         <button class="cart-btn bg-transparent border-0 position-relative p-0" onclick="Cart.togglePanel()">
                             <span class="fs-4">🛒</span>
                             <span class="cart-count position-absolute rounded-pill" id="cartCount">0</span>
                         </button>
 
                         <button class="nav-cta rounded-0" onclick="document.getElementById('personalizacion').scrollIntoView({behavior:'smooth'})">
-                            <a href="/personalizacion/personalizacion.html">PERSONALIZAR</a>
+                            <a href="Personalizacion/personalizacion.html">PERSONALIZAR</a>
                         </button>
                         
                     </div>
@@ -81,7 +89,7 @@
       <div class="row align-items-center justify-content-center gap-lg-5">
         <div class="col-12 col-lg-5 mb-5 mb-lg-0 text-center position-relative fade-in-left">
           <div class="hero-image-wrapper">
-            <img src="/img/Principal.jpeg" alt="Torta de bodas soñada en Lima" class="img-fluid hero-img">
+            <img src="main/img/Principal.jpeg" alt="Torta de bodas soñada en Lima" class="img-fluid hero-img">
           </div>
         </div>
 
@@ -139,7 +147,7 @@
         <div class="col-12 col-md-8 text-center p-5 custom-cta-box">
           <h2 class="cta-title mb-4">¿Listo para crear tu torta?</h2>
           <button class="btn-primary-custom shadow-sm">
-            <a href="/personalizacion/personalizacion.html">Configurar mi torta</a>
+            <a href="Personalizacion/personalizacion.html">Configurar mi torta</a>
           </button> 
         </div>
       </div>
@@ -160,7 +168,7 @@
             </div>
 
         <div class="text-center mt-5 pt-3">
-            <button onclick="window.location.href='/catalogo/catalogo.html'" class="btn-ver-mas">
+            <button onclick="window.location.href='Catalogo/catalogo.html'" class="btn-ver-mas">
                 VER CATÁLOGO COMPLETO
             </button>
         </div>
@@ -212,12 +220,14 @@
     <p class="text-muted mb-0">© 2026 Pastelería de Bodas. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/shared/api.js"></script>
-  <script src="/shared/cart.js"></script>
-  <script src="/shared/auth.js"></script>
-  <script src="/shared/accessibility.js"></script>
-  <script src="script.js"></script>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared/supabase.js"></script>
+<script src="shared/cart.js"></script>
+<script src="shared/auth.js"></script>
+<script src="shared/accessibility.js"></script>
+<script src="shared/orders.js"></script>
+<script src="main/script.js"></script>
 </body>
 </html>

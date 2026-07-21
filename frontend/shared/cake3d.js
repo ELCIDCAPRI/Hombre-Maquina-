@@ -223,36 +223,95 @@ const Cake3D = {
             }
         });
 
-        // Top decoration
         if (this.decoration === 'Flores Naturales') {
-            const flowerColors = [0xffd6e0, 0xfff0f5, 0xffe4e1, 0xffb7c5, 0xffc0cb];
-            const topY = configs[configs.length - 1].y + configs[configs.length - 1].height / 2;
-            const topR = configs[configs.length - 1].radius;
+            const flowerColors = [0xffd6e0, 0xfff0f5, 0xffe4e1, 0xffb7c5, 0xffc0cb, 0xf8e8ee];
+            const leafColor = 0x6b8f5e;
 
-            for (let f = 0; f < 6; f++) {
-                const fAngle = (f / 6) * Math.PI * 2 + 0.2;
-                const fR = topR * 0.55;
-                const fColor = flowerColors[f % flowerColors.length];
-
-                const fGroup = new THREE.Group();
-                for (let p = 0; p < 6; p++) {
+            const _createFlower = (scale) => {
+                const fg = new THREE.Group();
+                const s = scale || 1;
+                for (let p = 0; p < 7; p++) {
+                    const pa = (p / 7) * Math.PI * 2;
                     const petal = new THREE.Mesh(
-                        new THREE.SphereGeometry(0.09, 6, 6),
-                        new THREE.MeshStandardMaterial({ color: fColor, roughness: 0.3 })
+                        new THREE.SphereGeometry(0.12 * s, 8, 6),
+                        new THREE.MeshStandardMaterial({ color: flowerColors[p % flowerColors.length], roughness: 0.35 })
                     );
-                    petal.scale.set(1, 0.3, 1.6);
-                    const pa = (p / 6) * Math.PI * 2;
-                    petal.position.set(Math.cos(pa) * 0.13, 0, Math.sin(pa) * 0.13);
-                    fGroup.add(petal);
+                    petal.scale.set(1, 0.25, 1.8);
+                    petal.position.set(Math.cos(pa) * 0.16 * s, 0, Math.sin(pa) * 0.16 * s);
+                    fg.add(petal);
                 }
-                const center = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.035, 6, 6),
+                const ctr = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.05 * s, 8, 8),
                     new THREE.MeshStandardMaterial({ color: 0xfff8dc, roughness: 0.2 })
                 );
-                fGroup.add(center);
-                fGroup.position.set(Math.cos(fAngle) * fR, topY + 0.05, Math.sin(fAngle) * fR);
-                group.add(fGroup);
+                ctr.position.y = 0.01;
+                fg.add(ctr);
+                return fg;
+            };
+
+            const _createLeaf = (s) => {
+                const leaf = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.1 * s, 6, 4),
+                    new THREE.MeshStandardMaterial({ color: leafColor, roughness: 0.5 })
+                );
+                leaf.scale.set(0.5, 0.12, 1.4);
+                return leaf;
+            };
+
+            // Top crown of flowers
+            const topCfg = configs[configs.length - 1];
+            const topY = topCfg.y + topCfg.height / 2;
+            const topR = topCfg.radius;
+
+            for (let f = 0; f < 8; f++) {
+                const fAngle = (f / 8) * Math.PI * 2;
+                const isInner = f % 2 === 0;
+                const fR = isInner ? topR * 0.4 : topR * 0.7;
+                const flower = _createFlower(isInner ? 1.1 : 0.8);
+                flower.position.set(Math.cos(fAngle) * fR, topY + 0.06, Math.sin(fAngle) * fR);
+                flower.rotation.y = fAngle;
+                group.add(flower);
+
+                const leaf = _createLeaf(1);
+                leaf.position.set(
+                    Math.cos(fAngle + 0.3) * (fR + 0.12),
+                    topY + 0.02,
+                    Math.sin(fAngle + 0.3) * (fR + 0.12)
+                );
+                leaf.lookAt(0, topY, 0);
+                group.add(leaf);
             }
+
+            // Cascade flowers down each tier
+            configs.forEach((cfg, ti) => {
+                const tierTop = cfg.y + cfg.height / 2;
+                const tierBot = cfg.y - cfg.height / 2;
+                const flowerCount = Math.max(3, Math.floor(cfg.radius * 2.5));
+                for (let f = 0; f < flowerCount; f++) {
+                    const fAngle = (f / flowerCount) * Math.PI * 2 + ti * 0.7;
+                    const yPos = tierTop - (f / flowerCount) * cfg.height * 0.6;
+                    const flower = _createFlower(0.55);
+                    flower.position.set(
+                        Math.cos(fAngle) * (cfg.radius + 0.02),
+                        yPos,
+                        Math.sin(fAngle) * (cfg.radius + 0.02)
+                    );
+                    flower.lookAt(0, yPos, 0);
+                    flower.rotation.z = Math.PI / 2;
+                    group.add(flower);
+
+                    if (f % 2 === 0) {
+                        const leaf = _createLeaf(0.6);
+                        leaf.position.set(
+                            Math.cos(fAngle + 0.2) * (cfg.radius + 0.04),
+                            yPos - 0.06,
+                            Math.sin(fAngle + 0.2) * (cfg.radius + 0.04)
+                        );
+                        leaf.lookAt(0, yPos - 0.06, 0);
+                        group.add(leaf);
+                    }
+                }
+            });
         }
 
         if (this.decoration === 'Pan de Oro y Texturas') {

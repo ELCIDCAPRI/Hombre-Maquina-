@@ -1,21 +1,25 @@
 const Accessibility = {
     _key: 'ts_accessibility',
-    active: false,
-    fontSize: 100,
-    readOnHover: false,
-    tdahMode: false,
+    settings: {
+        fontSize: 100,
+        language: 'es',
+        profile: null,
+        contrast: false,
+        cursor: false,
+        readingMask: false,
+        dyslexiaFriendly: false,
+        bigLineHeight: false
+    },
     speechSynth: window.speechSynthesis,
-    _ruler: null,
-    _lastUtterance: null,
 
     init() {
         const saved = JSON.parse(localStorage.getItem(this._key) || '{}');
-        this.fontSize = saved.fontSize || 100;
-        this.active = saved.active || false;
-        this.readOnHover = saved.readOnHover || false;
-        this.tdahMode = saved.tdahMode || false;
+        this.settings = { ...this.settings, ...saved };
         this._injectWidget();
-        window.addEventListener('load', () => this._apply());
+        this._apply();
+        this._updateToggles();
+        this._updateProfileUI();
+        this._updateLanguage();
     },
 
     _injectWidget() {
@@ -27,239 +31,266 @@ const Accessibility = {
         btn.innerHTML = '<span style="font-size:1.3rem;">♿</span>';
         btn.onclick = () => this.togglePanel();
 
+        const overlay = document.createElement('div');
+        overlay.id = 'acc-overlay';
+        overlay.className = 'acc-overlay';
+        overlay.onclick = () => this.togglePanel();
+
         const panel = document.createElement('div');
         panel.id = 'acc-panel';
         panel.className = 'acc-panel';
         panel.setAttribute('role', 'dialog');
         panel.setAttribute('aria-label', 'Panel de accesibilidad');
+
+        const s = this.settings;
+
         panel.innerHTML = `
             <div class="acc-panel-header">
-                <strong>Accesibilidad</strong>
-                <button id="acc-close" aria-label="Cerrar panel">&times;</button>
+                <div class="acc-panel-header-left">
+                    <span class="acc-icon">♿</span>
+                    <h2 class="acc-title">Accesibilidad</h2>
+                </div>
+                <button class="acc-panel-close" id="acc-close" aria-label="Cerrar panel">&times;</button>
             </div>
             <div class="acc-panel-body">
-                <div class="acc-group">
-                    <label>Tamaño de letra</label>
-                    <div class="acc-btn-group">
-                        <button id="acc-font-down" aria-label="Reducir fuente">A-</button>
-                        <span id="acc-font-value">${this.fontSize}%</span>
-                        <button id="acc-font-up" aria-label="Aumentar fuente">A+</button>
+                <div class="acc-section">
+                    <div class="acc-section-label">Idioma</div>
+                    <div class="acc-select-wrapper">
+                        <select class="acc-select" id="acc-language">
+                            <option value="es" ${s.language === 'es' ? 'selected' : ''}>Español ✓</option>
+                            <option value="en" ${s.language === 'en' ? 'selected' : ''}>Inglés</option>
+                            <option value="qu" ${s.language === 'qu' ? 'selected' : ''}>Quechua</option>
+                        </select>
                     </div>
                 </div>
-                <div class="acc-group">
-                    <label>Alto contraste</label>
-                    <button id="acc-contrast" class="acc-toggle" aria-label="Alternar alto contraste">
-                        ${this.active ? '✓ Activo' : '✗ Inactivo'}
-                    </button>
+
+                <div class="acc-section">
+                    <div class="acc-section-label">Perfil</div>
+                    <div class="acc-profile-list" id="acc-profiles">
+                        <div class="acc-profile-option ${s.profile === 'vision_baja' ? 'active' : ''}" data-profile="vision_baja">
+                            <div class="acc-radio"></div><span>Visión Baja</span>
+                        </div>
+                        <div class="acc-profile-option ${s.profile === 'dislexia' ? 'active' : ''}" data-profile="dislexia">
+                            <div class="acc-radio"></div><span>Dislexia</span>
+                        </div>
+                        <div class="acc-profile-option ${s.profile === 'tdah' ? 'active' : ''}" data-profile="tdah">
+                            <div class="acc-radio"></div><span>TDHA</span>
+                        </div>
+                        <div class="acc-profile-option ${s.profile === 'daltonismo' ? 'active' : ''}" data-profile="daltonismo">
+                            <div class="acc-radio"></div><span>Daltonismo</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="acc-group">
-                    <label>Escala de grises</label>
-                    <button id="acc-grayscale" class="acc-toggle" aria-label="Alternar escala de grises">✗ Inactivo</button>
+
+                <div class="acc-section">
+                    <div class="acc-section-label">Ajustes Visuales</div>
+                    <div class="acc-toggles-grid">
+                        <div>
+                            <div style="font-size:0.82rem;color:var(--brown,#4d3e35);margin-bottom:6px;">Tamaño de texto</div>
+                            <div class="acc-slider-wrapper">
+                                <input type="range" class="acc-slider" id="acc-font-slider" min="70" max="150" step="10" value="${s.fontSize}">
+                                <span class="acc-slider-value" id="acc-font-value">${s.fontSize}%</span>
+                            </div>
+                        </div>
+                        <button class="acc-toggle-btn ${s.contrast ? 'active' : ''}" data-setting="contrast" id="acc-contrast">
+                            <span>Contrastes</span><div class="acc-toggle-switch"></div>
+                        </button>
+                        <button class="acc-toggle-btn ${s.cursor ? 'active' : ''}" data-setting="cursor" id="acc-cursor">
+                            <span>Cursor</span><div class="acc-toggle-switch"></div>
+                        </button>
+                        <button class="acc-toggle-btn ${s.readingMask ? 'active' : ''}" data-setting="readingMask" id="acc-mask">
+                            <span>Máscara de lectura</span><div class="acc-toggle-switch"></div>
+                        </button>
+                        <button class="acc-toggle-btn ${s.dyslexiaFriendly ? 'active' : ''}" data-setting="dyslexiaFriendly" id="acc-dyslexia">
+                            <span>Dislexia amigable</span><div class="acc-toggle-switch"></div>
+                        </button>
+                        <button class="acc-toggle-btn ${s.bigLineHeight ? 'active' : ''}" data-setting="bigLineHeight" id="acc-lineheight">
+                            <span>Interlineado</span><div class="acc-toggle-switch"></div>
+                        </button>
+                    </div>
                 </div>
-                <div class="acc-group">
-                    <label>🔊 Leer al pasar el mouse</label>
-                    <button id="acc-readhover" class="acc-toggle" aria-label="Alternar lectura en voz alta al pasar el mouse">
-                        ${this.readOnHover ? '✓ Activo' : '✗ Inactivo'}
-                    </button>
-                </div>
-                <div class="acc-group">
-                    <label>🧠 Modo TDAH</label>
-                    <button id="acc-tdah" class="acc-toggle" aria-label="Alternar modo TDAH">
-                        ${this.tdahMode ? '✓ Activo' : '✗ Inactivo'}
-                    </button>
-                    <small class="acc-hint">Regla de lectura · menos distracciones · fuente más clara</small>
-                </div>
-                <button id="acc-reset" class="acc-reset-btn">Restablecer</button>
             </div>
+            <button class="acc-reset-btn" id="acc-reset">Restablecer</button>
         `;
 
         document.body.appendChild(btn);
+        document.body.appendChild(overlay);
         document.body.appendChild(panel);
+        this._bindEvents();
+    },
 
+    _bindEvents() {
         document.getElementById('acc-close').onclick = () => this.togglePanel();
-        document.getElementById('acc-font-up').onclick = () => this.changeFont(10);
-        document.getElementById('acc-font-down').onclick = () => this.changeFont(-10);
-        document.getElementById('acc-contrast').onclick = () => this.toggleContrast();
-        document.getElementById('acc-grayscale').onclick = () => this.toggleGrayscale();
-        document.getElementById('acc-readhover').onclick = () => this.toggleReadOnHover();
-        document.getElementById('acc-tdah').onclick = () => this.toggleTDAH();
+
+        document.getElementById('acc-language').onchange = (e) => {
+            this.settings.language = e.target.value;
+            this._save();
+            this._updateLanguage();
+        };
+
+        document.querySelectorAll('.acc-profile-option').forEach(el => {
+            el.onclick = () => {
+                const profile = el.dataset.profile;
+                if (this.settings.profile === profile) {
+                    this.settings.profile = null;
+                } else {
+                    this.settings.profile = profile;
+                }
+                document.querySelectorAll('.acc-profile-option').forEach(o => o.classList.remove('active'));
+                if (this.settings.profile) el.classList.add('active');
+                this._save();
+                this._applyProfile();
+                this._apply();
+                this._updateToggles();
+                this._updateSlider();
+            };
+        });
+
+        ['contrast', 'cursor', 'readingMask', 'dyslexiaFriendly', 'bigLineHeight'].forEach(key => {
+            const id = key === 'contrast' ? 'acc-contrast' :
+                       key === 'cursor' ? 'acc-cursor' :
+                       key === 'readingMask' ? 'acc-mask' :
+                       key === 'dyslexiaFriendly' ? 'acc-dyslexia' :
+                       'acc-lineheight';
+            document.getElementById(id).onclick = () => {
+                this.settings[key] = !this.settings[key];
+                this._save();
+                this._apply();
+                this._updateToggles();
+            };
+        });
+
+        const slider = document.getElementById('acc-font-slider');
+        slider.oninput = () => {
+            this.settings.fontSize = parseInt(slider.value);
+            document.getElementById('acc-font-value').textContent = this.settings.fontSize + '%';
+            this._save();
+            this._apply();
+        };
+
         document.getElementById('acc-reset').onclick = () => this.reset();
     },
 
     togglePanel() {
-        const panel = document.getElementById('acc-panel');
-        panel.classList.toggle('show');
+        document.getElementById('acc-panel').classList.toggle('show');
+        document.getElementById('acc-overlay').classList.toggle('show');
     },
 
-    changeFont(delta) {
-        this.fontSize = Math.max(70, Math.min(150, this.fontSize + delta));
-        document.getElementById('acc-font-value').textContent = this.fontSize + '%';
-        this._save();
-        this._apply();
-    },
-
-    toggleContrast() {
-        this.active = !this.active;
-        document.getElementById('acc-contrast').textContent = this.active ? '✓ Activo' : '✗ Inactivo';
-        this._save();
-        this._apply();
-    },
-
-    toggleGrayscale() {
-        const html = document.documentElement;
-        const isActive = html.classList.toggle('acc-grayscale');
-        document.getElementById('acc-grayscale').textContent = isActive ? '✓ Activo' : '✗ Inactivo';
-        localStorage.setItem('ts_grayscale', isActive ? '1' : '0');
-    },
-
-    toggleReadOnHover() {
-        this.readOnHover = !this.readOnHover;
-        const btn = document.getElementById('acc-readhover');
-        btn.textContent = this.readOnHover ? '✓ Activo' : '✗ Inactivo';
-        this._save();
-        if (this.readOnHover) {
-            this._enableReadOnHover();
-        } else {
-            this._disableReadOnHover();
-        }
-    },
-
-    toggleTDAH() {
-        this.tdahMode = !this.tdahMode;
-        const btn = document.getElementById('acc-tdah');
-        btn.textContent = this.tdahMode ? '✓ Activo' : '✗ Inactivo';
-        this._save();
-        document.documentElement.classList.toggle('acc-tdah', this.tdahMode);
-        if (this.tdahMode) {
-            this._enableRuler();
-        } else {
-            this._disableRuler();
-        }
-    },
-
-    _enableReadOnHover() {
-        document.addEventListener('mouseover', this._readHandler, true);
-        document.addEventListener('mouseout', this._cancelHandler, true);
-    },
-
-    _disableReadOnHover() {
-        document.removeEventListener('mouseover', this._readHandler, true);
-        document.removeEventListener('mouseout', this._cancelHandler, true);
-        this._cancelSpeech();
-    },
-
-    _readHandler: (function() {
-        let timer = null;
-        return function(e) {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const el = e.target;
-                if (!el || !el.textContent) return;
-                const tag = el.tagName || '';
-                if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
-                if (el.closest('.acc-panel') || el.closest('.cart-panel') || el.closest('.modal')) return;
-                const text = (el.innerText || '').trim();
-                if (!text || text.length < 5) return;
-                if (window._accLastRead === text) return;
-                window._accLastRead = text;
-                Accessibility._speak(text);
-            }, 300);
+    reset() {
+        this.settings = {
+            fontSize: 100, language: 'es', profile: null,
+            contrast: false, cursor: false, readingMask: false,
+            dyslexiaFriendly: false, bigLineHeight: false
         };
-    })(),
+        this._save();
+        this._apply();
+        this._updateToggles();
+        this._updateProfileUI();
+        this._updateLanguage();
+        this._updateSlider();
+    },
 
-    _cancelHandler: function() {
-        clearTimeout(window._accReadTimer);
-        Accessibility._cancelSpeech();
+    _save() {
+        localStorage.setItem(this._key, JSON.stringify(this.settings));
+    },
+
+    _apply() {
+        const html = document.documentElement;
+        const s = this.settings;
+
+        html.style.fontSize = s.fontSize + '%';
+        html.classList.toggle('acc-high-contrast', s.contrast);
+        html.classList.toggle('acc-cursor-large', s.cursor);
+        html.classList.toggle('acc-dyslexia-friendly', s.dyslexiaFriendly);
+        html.classList.toggle('acc-big-line-height', s.bigLineHeight);
+
+        const htmlClasses = html.className.split(' ').filter(c =>
+            !c.startsWith('acc-profile-')
+        );
+        if (s.profile) htmlClasses.push('acc-profile-' + s.profile);
+        html.className = htmlClasses.join(' ');
+
+        this._applyReadingMask(s.readingMask);
+    },
+
+    _applyReadingMask(active) {
+        const existing = document.getElementById('acc-reading-mask');
+        if (active && !existing) {
+            const mask = document.createElement('div');
+            mask.id = 'acc-reading-mask';
+            mask.className = 'acc-reading-mask-track';
+            mask.style.top = '0px';
+            document.body.appendChild(mask);
+            this._maskMoveHandler = (e) => {
+                mask.style.top = (e.clientY - 60) + 'px';
+            };
+            document.addEventListener('mousemove', this._maskMoveHandler);
+        } else if (!active && existing) {
+            existing.remove();
+            if (this._maskMoveHandler) {
+                document.removeEventListener('mousemove', this._maskMoveHandler);
+                this._maskMoveHandler = null;
+            }
+        }
+    },
+
+    _applyProfile() {
+        const s = this.settings;
+        switch (s.profile) {
+            case 'vision_baja':
+                s.fontSize = Math.max(s.fontSize, 130);
+                s.contrast = true;
+                break;
+            case 'dislexia':
+                s.dyslexiaFriendly = true;
+                s.bigLineHeight = true;
+                break;
+            case 'tdah':
+                break;
+            case 'daltonismo':
+                break;
+        }
+    },
+
+    _updateToggles() {
+        const s = this.settings;
+        const pairs = {
+            'acc-contrast': s.contrast, 'acc-cursor': s.cursor,
+            'acc-mask': s.readingMask, 'acc-dyslexia': s.dyslexiaFriendly,
+            'acc-lineheight': s.bigLineHeight
+        };
+        Object.entries(pairs).forEach(([id, active]) => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('active', active);
+        });
+    },
+
+    _updateProfileUI() {
+        document.querySelectorAll('.acc-profile-option').forEach(el => {
+            el.classList.toggle('active', el.dataset.profile === this.settings.profile);
+        });
+    },
+
+    _updateSlider() {
+        const sl = document.getElementById('acc-font-slider');
+        const fv = document.getElementById('acc-font-value');
+        if (sl) sl.value = this.settings.fontSize;
+        if (fv) fv.textContent = this.settings.fontSize + '%';
+    },
+
+    _updateLanguage() {
+        const lang = document.getElementById('acc-language');
+        if (lang) lang.value = this.settings.language;
     },
 
     _speak(text) {
         if (!this.speechSynth) return;
         this.speechSynth.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'es-PE';
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        this.speechSynth.speak(utterance);
-    },
-
-    _cancelSpeech() {
-        if (this.speechSynth) {
-            this.speechSynth.cancel();
-        }
-        window._accLastRead = null;
-    },
-
-    _enableRuler() {
-        if (this._ruler) return;
-        const ruler = document.createElement('div');
-        ruler.id = 'acc-ruler';
-        ruler.className = 'acc-ruler';
-        document.body.appendChild(ruler);
-        this._ruler = ruler;
-        document.addEventListener('mousemove', this._rulerMoveHandler);
-    },
-
-    _disableRuler() {
-        if (this._ruler) {
-            this._ruler.remove();
-            this._ruler = null;
-        }
-        document.removeEventListener('mousemove', this._rulerMoveHandler);
-    },
-
-    _rulerMoveHandler: (function() {
-        let rafId = null;
-        return function(e) {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(() => {
-                const ruler = document.getElementById('acc-ruler');
-                if (ruler) {
-                    ruler.style.top = (e.clientY - 2) + 'px';
-                }
-            });
-        };
-    })(),
-
-    reset() {
-        this.fontSize = 100;
-        this.active = false;
-        document.getElementById('acc-font-value').textContent = '100%';
-        document.getElementById('acc-contrast').textContent = '✗ Inactivo';
-        document.documentElement.classList.remove('acc-grayscale');
-        document.getElementById('acc-grayscale').textContent = '✗ Inactivo';
-        localStorage.setItem('ts_grayscale', '0');
-        if (this.readOnHover) {
-            this.toggleReadOnHover();
-        }
-        if (this.tdahMode) {
-            this.toggleTDAH();
-        }
-        this._save();
-        this._apply();
-    },
-
-    _save() {
-        localStorage.setItem(this._key, JSON.stringify({
-            fontSize: this.fontSize,
-            active: this.active,
-            readOnHover: this.readOnHover,
-            tdahMode: this.tdahMode
-        }));
-    },
-
-    _apply() {
-        const html = document.documentElement;
-        html.style.fontSize = this.fontSize + '%';
-        html.classList.toggle('acc-high-contrast', this.active);
-        if (localStorage.getItem('ts_grayscale') === '1') {
-            html.classList.add('acc-grayscale');
-        }
-        if (this.tdahMode) {
-            html.classList.add('acc-tdah');
-        }
-        if (this.readOnHover) {
-            this._enableReadOnHover();
-        }
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = this.settings.language === 'en' ? 'en-US' :
+                 this.settings.language === 'qu' ? 'qu-PE' : 'es-PE';
+        u.rate = 0.9;
+        this.speechSynth.speak(u);
     }
 };
 

@@ -1,6 +1,9 @@
 const Cart = {
     _key: 'ts_cart',
+<<<<<<< HEAD
     _ordersKey: 'ts_orders',
+=======
+>>>>>>> master
 
     getItems() {
         return JSON.parse(localStorage.getItem(this._key) || '[]');
@@ -12,7 +15,11 @@ const Cart = {
         items.push({ ...item, cartId });
         localStorage.setItem(this._key, JSON.stringify(items));
         this._notify();
+<<<<<<< HEAD
         this._toast('✓ Añadido al carrito');
+=======
+        this._toast('Añadido al carrito');
+>>>>>>> master
     },
 
     removeItem(cartId) {
@@ -30,16 +37,28 @@ const Cart = {
         return this.getItems().length;
     },
 
+<<<<<<< HEAD
+=======
+    getTotal() {
+        return this.getItems().reduce((s, i) => s + (i.precio || 0), 0);
+    },
+
+>>>>>>> master
     checkout() {
         const items = this.getItems();
         if (items.length === 0) return;
 
         const user = typeof Auth !== 'undefined' && Auth.getUser ? Auth.getUser() : null;
         if (!user) {
+<<<<<<< HEAD
             this._toast('🔒 Debes iniciar sesión para realizar el pedido');
             if (typeof Auth !== 'undefined' && Auth.openModal) {
                 Auth.openModal();
             }
+=======
+            this._toast('Debes iniciar sesión para realizar el pedido');
+            if (typeof Auth !== 'undefined' && Auth.openModal) Auth.openModal();
+>>>>>>> master
             return;
         }
 
@@ -56,9 +75,14 @@ const Cart = {
         document.getElementById('checkout-notas').value = '';
         document.getElementById('checkout-error').classList.add('d-none');
 
+<<<<<<< HEAD
         const modal = document.getElementById('checkoutModal');
         if (bootstrap && bootstrap.Modal) {
             bootstrap.Modal.getOrCreateInstance(modal).show();
+=======
+        if (bootstrap && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('checkoutModal')).show();
+>>>>>>> master
         }
     },
 
@@ -67,11 +91,19 @@ const Cart = {
 
         const div = document.createElement('div');
         div.innerHTML = `
+<<<<<<< HEAD
         <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content" style="border-radius:8px;border:none;">
               <div class="modal-header border-0 pb-0">
                 <h5 class="mb-0" id="checkoutModalTitle" style="font-family:'Playfair Display',serif;color:var(--brown);">💍 Datos de Entrega</h5>
+=======
+        <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content" style="border-radius:8px;border:none;">
+              <div class="modal-header border-0 pb-0">
+                <h5 class="mb-0" style="font-family:'Playfair Display',serif;color:var(--brown);">Datos de Entrega</h5>
+>>>>>>> master
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
               </div>
               <div class="modal-body px-4 py-3">
@@ -86,6 +118,7 @@ const Cart = {
                       <input type="email" class="form-control" id="checkout-email" readonly style="background:#f8f6f3;cursor:not-allowed;">
                     </div>
                     <div class="col-12 col-md-6">
+<<<<<<< HEAD
                       <label class="form-label text-muted small">Teléfono <span class="text-danger">*</span></label>
                       <input type="tel" class="form-control" id="checkout-telefono" required placeholder="999 888 777" autocomplete="tel">
                     </div>
@@ -106,6 +139,26 @@ const Cart = {
                   <button type="submit" class="btn-primary-custom w-100 shadow-sm mt-3" style="padding:12px 24px;">
                     ✅ CONFIRMAR PEDIDO
                   </button>
+=======
+                      <label class="form-label text-muted small">Teléfono *</label>
+                      <input type="tel" class="form-control" id="checkout-telefono" required placeholder="999 888 777">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label text-muted small">Fecha del evento *</label>
+                      <input type="date" class="form-control" id="checkout-fecha" required>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label text-muted small">Dirección de entrega *</label>
+                      <input type="text" class="form-control" id="checkout-direccion" required placeholder="Calle, número, distrito">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label text-muted small">Notas adicionales</label>
+                      <textarea class="form-control" id="checkout-notas" rows="2" placeholder="Alérgenos, horario, etc."></textarea>
+                    </div>
+                  </div>
+                  <div id="checkout-error" class="text-danger small mb-2 d-none"></div>
+                  <button type="submit" class="btn-primary-custom w-100 shadow-sm mt-3" style="padding:12px 24px;">CONFIRMAR PEDIDO</button>
+>>>>>>> master
                 </form>
               </div>
             </div>
@@ -114,7 +167,11 @@ const Cart = {
         Array.from(div.children).forEach(child => document.body.appendChild(child));
     },
 
+<<<<<<< HEAD
     async _handleCheckout(event) {
+=======
+    _handleCheckout(event) {
+>>>>>>> master
         event.preventDefault();
         const items = this.getItems();
         if (items.length === 0) return;
@@ -137,6 +194,10 @@ const Cart = {
         const user = Auth.getUser();
         const total = items.reduce((s, i) => s + (i.precio || 0), 0);
 
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:shared/cart.js
+>>>>>>> master
 
         // Guardar temporalmente toda la información
         this.pendingOrder = {
@@ -459,6 +520,10 @@ const Cart = {
     },
 
     async _confirmPayment() {
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
         const pedido = this.pendingOrder;
         if (!pedido) {
             this._toast("No existe un pedido pendiente.");
@@ -567,6 +632,30 @@ const Cart = {
             codigoOperacion: pedido.codigoOperacion || null,
         });
         localStorage.setItem(this._ordersKey, JSON.stringify(orders));
+<<<<<<< HEAD
+=======
+========
+        const ordersKey = 'ts_orders';
+        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+        const newOrder = {
+            id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
+            usuario_id: user.id,
+            items: items.map(i => ({ nombre: i.nombre, precio: i.precio })),
+            total: total,
+            estado: 'pendiente',
+            fecha: new Date().toISOString().split('T')[0],
+            cliente: nombre,
+            email: email,
+            telefono: telefono,
+            direccion: direccion,
+            fechaEvento: fechaEvento,
+            notas: notas
+        };
+
+        orders.push(newOrder);
+        localStorage.setItem(ordersKey, JSON.stringify(orders));
+>>>>>>>> master:frontend/shared/cart.js
+>>>>>>> master
 
         if (bootstrap && bootstrap.Modal) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
@@ -579,6 +668,10 @@ const Cart = {
         this._showCelebration();
     },
 
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:shared/cart.js
+>>>>>>> master
 
     _initPaymentEvents() {
     document
@@ -602,6 +695,11 @@ const Cart = {
         return JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
     },
 
+<<<<<<< HEAD
+=======
+========
+>>>>>>>> master:frontend/shared/cart.js
+>>>>>>> master
     _notify() {
         const count = this.getCount();
         document.querySelectorAll('.cart-count').forEach(el => {
@@ -643,7 +741,11 @@ const Cart = {
         const container = document.getElementById('cart-items');
         if (!container) return;
         const items = this.getItems();
+<<<<<<< HEAD
         const total = items.reduce((s, i) => s + (i.precio || 0), 0);
+=======
+        const total = this.getTotal();
+>>>>>>> master
         if (items.length === 0) {
             container.innerHTML = '<div class="cart-empty text-center py-5"><p class="text-muted mb-1">Tu carrito está vacío</p><small class="text-muted">Explora nuestro catálogo y personaliza tu torta ideal</small></div>';
             document.getElementById('cart-total').textContent = 'S/ 0.00';
@@ -688,19 +790,28 @@ const Cart = {
             </div>
         `;
         document.body.appendChild(overlay);
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         requestAnimationFrame(() => overlay.classList.add('show'));
 
         const close = () => {
             overlay.classList.remove('show');
             setTimeout(() => { if (overlay.parentElement) overlay.remove(); }, 500);
         };
+<<<<<<< HEAD
 
         setTimeout(close, 4500);
         overlay.addEventListener('click', function (e) {
             if (e.target === overlay || e.target.classList.contains('celebration-card')) {
                 close();
             }
+=======
+        setTimeout(close, 4500);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay || e.target.classList.contains('celebration-card')) close();
+>>>>>>> master
         });
     },
 
@@ -709,6 +820,7 @@ const Cart = {
         const style = document.createElement('style');
         style.id = 'celebration-style';
         style.textContent = `
+<<<<<<< HEAD
             #celebration-overlay {
                 position: fixed;
                 inset: 0;
@@ -813,6 +925,23 @@ const Cart = {
                 .celebration-emoji { font-size: 2.5rem; }
                 .celeb-icon { font-size: 1.3rem; }
             }
+=======
+            #celebration-overlay { position:fixed; inset:0; z-index:99999; background:rgba(253,248,242,0.92); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.5s ease; }
+            #celebration-overlay.show { opacity:1; pointer-events:auto; }
+            .celebration-icons { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+            .celeb-icon { position:absolute; font-size:1.8rem; opacity:0; animation:celebFloat 4s ease-in-out infinite; animation-delay:calc(var(--i)*0.3s); }
+            .celeb-icon:nth-child(1){left:10%;top:20%;} .celeb-icon:nth-child(2){left:85%;top:15%;} .celeb-icon:nth-child(3){left:20%;top:70%;} .celeb-icon:nth-child(4){left:75%;top:75%;} .celeb-icon:nth-child(5){left:50%;top:10%;} .celeb-icon:nth-child(6){left:5%;top:50%;} .celeb-icon:nth-child(7){left:90%;top:50%;} .celeb-icon:nth-child(8){left:40%;top:85%;}
+            @keyframes celebFloat { 0%{transform:translateY(0) scale(0.8);opacity:0;} 20%{opacity:0.6;} 50%{transform:translateY(-30px) scale(1.1);opacity:0.8;} 80%{opacity:0.6;} 100%{transform:translateY(0) scale(0.8);opacity:0;} }
+            .celebration-card { background:white; border-radius:20px; padding:48px 40px 36px; text-align:center; box-shadow:0 20px 60px rgba(77,62,53,0.15); border:1px solid #f0e9df; max-width:400px; width:90%; transform:scale(0.8); opacity:0; transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); position:relative; z-index:2; }
+            #celebration-overlay.show .celebration-card { transform:scale(1); opacity:1; }
+            .celebration-emoji { font-size:3.5rem; margin-bottom:12px; }
+            .celebration-title { font-family:'Playfair Display',serif; color:var(--brown,#4d3e35); font-size:1.8rem; margin-bottom:8px; }
+            .celebration-text { color:#9c8470; font-size:0.95rem; line-height:1.6; margin-bottom:16px; }
+            .celebration-text strong { color:var(--brown,#4d3e35); }
+            .celebration-divider { width:40px; height:2px; background:var(--gold,#bda57b); margin:0 auto 12px; border-radius:2px; }
+            .celebration-small { font-size:0.75rem; color:#c5b8a8; margin:0; }
+            @media(max-width:576px){.celebration-card{padding:32px 24px 28px;}.celebration-title{font-size:1.4rem;}.celebration-emoji{font-size:2.5rem;}.celeb-icon{font-size:1.3rem;}}
+>>>>>>> master
         `;
         document.head.appendChild(style);
     }
