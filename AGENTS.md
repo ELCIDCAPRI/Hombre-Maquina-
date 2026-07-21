@@ -2,88 +2,119 @@
 
 ## Project overview
 
-Two unrelated projects in one repo:
+Three projects in one repo:
 
 | Project | Entry | Description |
 |---------|-------|-------------|
-| **Man-Machine optimization** | `app.py` | Streamlit app — efficiency/cost calculator for assigning workers to machines |
-| **Wedding cake website** | `main/index.html` | Static multi-page site for "Taller de Sabores", a Lima bakery |
+| **Taller de Sabores (Frontend)** | `frontend/index.html` | Static multi-page bakery website, deployed on **Render** |
+| **Taller de Sabores (Backend)** | `backend/src/server.js` | Node.js Express API, deployed on **Railway** |
+| **Man-Machine optimization** | `streamlit/app.py` | Streamlit app — efficiency/cost calculator for assigning workers to machines |
 
 ## Commands
 
 ```sh
-# Run the Streamlit app
-streamlit run app.py
-```
+# Frontend (local dev) — serve static files from frontend/
+npx serve frontend
 
-No package manager, build step, test framework, linter, or formatter configured.
+# Backend (local dev)
+cd backend && npm install && npm run dev
+
+# Streamlit app
+streamlit run streamlit/app.py
+```
 
 ## Structure
 
 ```
-app.py                     # Streamlit app (single-file, ~86 lines)
-shared/                    # Shared modules
-shared/cart.js             # Cart system (localStorage, sliding panel, checkout -> ts_orders)
-shared/auth.js             # Auth system (login/register, cliente/admin roles, modal injection)
-shared/accessibility.js    # Accessibility widget (font size, high contrast, grayscale, localStorage persistence)
-shared/accessibility.css   # Widget styles, high contrast mode, grayscale mode
-main/                      # Landing page: index.html, styles.css, script.js
-Catalogo/                  # Cake catalog: catalogo.html, catalogo.js (12 cakes from Unsplash), catalogo.css
-Catalogo/detallePastel/    # Cake detail page: detalle.html, detalle.js (12 cakes from Unsplash), detalle.css
-Contacto/                  # Contact: contacto.html (form with JS handler), contacto.css
-Nosotros/                  # About: nosotros.html, nosotros.css
-Personalizacion/           # Customisation: personalizacion.html (map, accessibility, step-by-step), personalizacion.js, personalizacion.css
+frontend/                        # Static site → Render
+├── index.html                   # Landing page
+├── styles.css                   # Landing page styles
+├── script.js                    # Featured cakes + reviews (fetches from API)
+├── img/                         # Local images
+├── shared/
+│   ├── api.js                   # API helper (auto-detects localhost vs production)
+│   ├── auth.js                  # Auth system (JWT-based, calls /api/auth/*)
+│   ├── cart.js                  # Cart (localStorage + checkout via /api/pedidos)
+│   ├── accessibility.js         # Accessibility widget (localStorage)
+│   ├── accessibility.css        # Widget styles
+│   └── cake3d.js                # Three.js 3D cake preview
+├── catalogo/                    # Catalog page + detail page
+├── contacto/                    # Contact form (POSTs to /api/contactos)
+├── nosotros/                    # About page
+└── personalizacion/             # 3-step cake configurator + 3D preview
+
+backend/                         # Express API → Railway
+├── package.json                 # express, mysql2, bcryptjs, jsonwebtoken, etc.
+├── .env.example                 # Environment variables template
+├── basededatos.sql              # MySQL schema (optimized for Railway)
+├── railway.json                 # Railway deploy config
+└── src/
+    ├── server.js                # Express app entry point
+    ├── config/db.js             # MySQL2 connection pool
+    ├── middleware/auth.js       # JWT authentication middleware
+    ├── routes/
+    │   ├── auth.js              # POST /register, /login, GET /users
+    │   ├── productos.js         # GET / (list+search), /featured, /:id
+    │   ├── pedidos.js           # POST / (checkout), GET / (user orders), /all (admin)
+    │   ├── resenas.js           # GET / (list), POST / (create)
+    │   ├── contactos.js         # POST / (contact form), GET / (admin)
+    │   └── personalizaciones.js # POST /, GET /:sesion_id
+    └── seed.js                  # Seeds admin user + 12 cakes + 3 categories
+
+streamlit/                       # Standalone Streamlit app
+└── app.py                       # Man-Machine optimizer (~86 lines)
 ```
+
+## Database
+
+- **Engine**: MySQL (Railway managed)
+- **Schema**: `backend/basededatos.sql` — 8 tables with IF NOT EXISTS + INSERT IGNORE
+- **Seed**: `backend/src/seed.js` — runs on deploy, idempotent
+- **Connect via SQL Workbench/J**: Use Railway MySQL connection string from dashboard
+- **Tables**: usuarios, categorias, pasteles, pedidos, detalle_pedido, resenas, contactos, personalizaciones
 
 ## Key facts
 
-- **no `requirements.txt`** — `streamlit` + `pandas` needed to run `app.py`
-- **no README**, no CI, no tests
-- All pages are in **Spanish** (labels, comments, vars)
-- Static site — Bootstrap 5.3.2 via CDN, Google Fonts, Font Awesome (contact page only)
-- Cart is `localStorage`-based via `shared/cart.js` — persists across pages. Cart panel slides in from right. Checkout saves to order history under `ts_orders` key.
-- Auth is `localStorage`-based via `shared/auth.js`. Two roles: `cliente` and `admin`. Default admin: `admin@tallerdesabores.pe` / `admin123`. Admin panel shows orders and user list.
-- Auth modals are **injected automatically** by auth.js — no need to duplicate modal HTML on each page
-- Accessibility widget (`shared/accessibility.js` + `shared/accessibility.css`) injected on all pages — floating ♿ button controls font size, high contrast, grayscale. Persists in `ts_accessibility` / `ts_grayscale` keys.
-- Catalog data: 12 cakes hardcoded in `Catalogo/catalogo.js` + `Catalogo/detallePastel/detalle.js`, all using Unsplash URLs
-- Every page has auth buttons (👤 login, logout, admin gear) in the navbar
-- Every page has the cart panel HTML and cart button in the navbar
-- Contacto form (`contacto.html:233`) has `onsubmit="return handleContactForm(event)"` — saves mock data, shows toast
-- Image paths are all Unsplash (`?auto=format&fit=crop&q=80&w=600`) — no local img/ references
-- Default admin credentials: `admin@tallerdesabores.pe` / `admin123`
-- localStorage keys: `ts_cart` (cart items), `ts_orders` (checkout history), `ts_auth` (current user), `ts_users` (user DB), `ts_accessibility` (widget prefs), `ts_grayscale` (grayscale toggle)
+- **Frontend**: Static site — Bootstrap 5.3.2 via CDN, Google Fonts, Font Awesome (contact page)
+- **Backend**: Node.js 18+ / Express 4 / MySQL2 — JWT auth, bcryptjs hashing, rate limiting, helmet
+- **Auth flow**: Register → Login (returns JWT) → Token stored in `ts_token` localStorage → Sent as Bearer header
+- **Cart flow**: localStorage (`ts_cart`) for ephemeral cart → Checkout sends items to POST /api/pedidos with JWT
+- **Catalog**: 12 cakes from database (seeded via seed.js), fetched via GET /api/productos
+- **Admin**: Default credentials `admin@tallerdesabores.pe` / `admin123` (seeded via seed.js with bcryptjs hash)
+- **All pages in Spanish** (labels, comments, vars)
+- **Accessibility**: Widget persists in `ts_accessibility` / `ts_grayscale` localStorage (client-only)
+- **API base URL**: Auto-detected in `shared/api.js` — localhost:4000 for dev, Railway URL for production
 
-## Shared modules API
+## Deployment
 
-### `shared/cart.js`
-- `Cart.addItem({ id, name, price, quantity, image, options })` — add to cart
-- `Cart.removeItem(id)` — remove item
-- `Cart.updateQuantity(id, qty)` — change qty (0 removes)
-- `Cart.getItems()` — return cart array
-- `Cart.getTotal()` — return total price
-- `Cart.getCount()` — return total item count
-- `Cart.togglePanel()` — show/hide sliding cart panel
-- `Cart.checkout()` — save to `ts_orders`, clear cart, show admin in admin panel
+### Frontend → Render
+1. Push repo to GitHub
+2. Create new **Static Site** on Render
+3. Connect GitHub repo, set root directory to `frontend/`
+4. No build command needed
+5. Set environment variable if needed (API URL is auto-detected)
 
-### `shared/auth.js`
-- `Auth.openModal(tab)` — open auth modal (tab: 'login' | 'register')
-- `Auth.openAdmin()` — open admin panel modal (orders + users tabs)
-- `Auth.logout()` — clear session, update UI
-- Injected HTML: Login modal (#authModal, #adminModal), admin panel, toast container
-- Auto-updates navbar: shows 👤 when logged out, shows name + logout when logged in, shows ⚙️ for admin users
+### Backend → Railway
+1. Create new **Node.js** service on Railway
+2. Connect GitHub repo, set root directory to `backend/`
+3. Add **MySQL** plugin on Railway
+4. Set environment variables:
+   - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` (from Railway MySQL plugin)
+   - `JWT_SECRET` (generate: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"`)
+   - `JWT_EXPIRES_IN=7d`
+   - `FRONTEND_URL` (your Render frontend URL, e.g. `https://taller-de-sabores.onrender.com`)
+   - `NODE_ENV=production`
+5. Deploy command: `node src/seed.js && node src/server.js` (set in railway.json)
 
-### `shared/accessibility.js`
-- Injects floating ♿ button bottom-left
-- Click opens widget panel: font size slider (70-150%), high contrast toggle, grayscale toggle
-- Applies `.high-contrast-mode` class to `<html>` for dark bg / white text / gold links
-- Applies `filter: grayscale(100%)` to `<html>` for grayscale mode
-- Persists settings in `ts_accessibility` (JSON: { fontSize, highContrast }) and `ts_grayscale` (boolean)
+### Database → SQL Workbench/J
+1. Get MySQL connection details from Railway dashboard (MySQL plugin)
+2. Open SQL Workbench/J
+3. Create new connection with Railway host, port, user, password, database
+4. Run `backend/basededatos.sql` to create tables
+5. Tables are auto-seeded on backend deploy via `seed.js`
 
-## Deployment notes
-
-For production deployment (shared hosting like Hostinger/SiteGround):
-1. Replace localStorage CRUD with PHP + MySQL
-2. Create PHP API endpoints: `/api/auth/login.php`, `/api/cart/add.php`, `/api/orders/list.php`, etc.
-3. Migrate `ts_users`, `ts_orders`, `ts_cart` to MySQL tables
-4. Use phpMyAdmin for DB management
-5. Update `shared/auth.js` and `shared/cart.js` to `fetch()` from PHP endpoints instead of localStorage
+### Streamlit App
+```sh
+streamlit run streamlit/app.py
+```
+Standalone — no dependencies on the bakery project.

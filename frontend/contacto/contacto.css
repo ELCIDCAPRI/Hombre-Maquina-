@@ -1,0 +1,270 @@
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: #fdfbf7; /* Fondo crema muy sutil */
+    color: #4a4a4a;
+}
+
+/* Variables de color basadas en tu imagen */
+:root {
+    --gold: #bda57b; /* Tono dorado/crema oscuro */
+    --brown: #4d3e35; /* Tono marrón oscuro del botón */
+    --muted: #9e9086; /* Tono de los enlaces inactivos */
+    --nav-bg: rgba(253, 248, 242, 0.98); /* Fondo crema claro */
+}
+
+/* Espacio superior para que el navbar fijo no tape el contenido */
+body {
+    padding-top: 70px; 
+}
+
+/* Estructura principal del Nav */
+.custom-navbar {
+    background: var(--nav-bg);
+    border-bottom: 1px solid #f0e9df;
+    min-height: 64px;
+    transition: all 0.3s ease;
+}
+
+/* Tipografía y diseño del Logo */
+.nav-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.nav-logo span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    letter-spacing: 3px;
+    color: var(--brown);
+}
+
+.nav-logo em {
+    font-style: italic;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+/* Estilos de los Enlaces */
+.nav-links .nav-link {
+    color: var(--muted) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links .nav-link:hover,
+.nav-links .nav-link.active {
+    color: var(--gold) !important;
+}
+
+/* Ajustes del Carrito */
+.cart-btn {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.cart-btn:hover {
+    transform: scale(1.05);
+}
+
+.cart-count {
+    top: -5px;
+    right: -10px;
+    background-color: var(--gold);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--nav-bg); /* Crea el efecto de separación */
+}
+
+/* Botón CTA (Personalizar) */
+.nav-cta {
+    background-color: var(--brown);
+    color: white;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    border: 1px solid var(--brown);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover {
+    background-color: transparent;
+    color: var(--brown);
+}
+
+.nav-cta a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.nav-cta:hover a {
+    color: var(--brown);
+}
+
+.wedding-title {
+    font-family: 'Playfair Display', serif;
+    color: #b58c49; /* Tono dorado/bronce elegante */
+    font-size: 3rem;
+    letter-spacing: 1.5px;
+}
+
+.filters-section .form-select {
+    border: 1px solid #eaeaea;
+    border-radius: 0;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.filters-section .form-select:focus {
+    border-color: #b58c49;
+    box-shadow: 0 0 0 0.25rem rgba(181, 140, 73, 0.25);
+}
+
+/* --- FORMULARIO DE CONTACTO --- */
+.custom-input {
+    border: 1px solid #f0e9df;
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    background-color: #fcfcfc;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+}
+
+.custom-input:focus {
+    border-color: var(--gold, #bda57b);
+    background-color: #ffffff;
+    /* Un resplandor dorado suave al hacer focus */
+    box-shadow: 0 0 0 0.2rem rgba(189, 165, 123, 0.15) !important; 
+}
+
+/* Iconos sociales minimalistas */
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--brown, #4d3e35);
+    color: var(--brown, #4d3e35);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: var(--brown, #4d3e35);
+    color: #ffffff;
+}
+
+/* Ocultar el icono de calendario por defecto en Chrome/Safari si se desea más limpieza */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* CART PANEL (shared) */
+.cart-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 9990;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.cart-panel-overlay.show { opacity: 1; pointer-events: auto; }
+
+.cart-panel {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 360px;
+    max-width: 90vw;
+    height: 100%;
+    background: white;
+    z-index: 9991;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.08);
+}
+.cart-panel.show { right: 0; }
+.cart-panel-body { flex: 1; overflow-y: auto; }
+.cart-panel-body::-webkit-scrollbar { width: 4px; }
+.cart-panel-body::-webkit-scrollbar-thumb { background: #e2dcd5; border-radius: 4px; }
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--brown);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s ease;
+    pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.btn-primary-custom {
+    background-color: var(--brown);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-primary-custom:hover {
+    background-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(189, 165, 123, 0.3) !important;
+}
+
+@media (max-width: 991px) {
+    .cart-panel { width: 100%; max-width: 100vw; right: -100vw; }
+}
+
+/* Ajustes específicos para pantallas móviles (< 992px) */
+@media (max-width: 991px) {
+    .nav-links {
+        padding-top: 1rem;
+        text-align: center;
+    }
+    
+    .nav-right {
+        justify-content: center;
+        border-top: 1px solid #f0e9df;
+        padding-top: 1.5rem;
+    }
+}
