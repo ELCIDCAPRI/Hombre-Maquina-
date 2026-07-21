@@ -114,7 +114,7 @@ const Cart = {
         Array.from(div.children).forEach(child => document.body.appendChild(child));
     },
 
-    _handleCheckout(event) {
+    async _handleCheckout(event) {
         event.preventDefault();
         const items = this.getItems();
         if (items.length === 0) return;
@@ -126,37 +126,478 @@ const Cart = {
         const fechaEvento = document.getElementById('checkout-fecha').value;
         const notas = document.getElementById('checkout-notas').value.trim();
 
+        const errorEl = document.getElementById('checkout-error');
+
         if (!telefono || !direccion || !fechaEvento) {
-            document.getElementById('checkout-error').textContent = 'Completa todos los campos obligatorios.';
-            document.getElementById('checkout-error').classList.remove('d-none');
+            errorEl.textContent = 'Completa todos los campos obligatorios.';
+            errorEl.classList.remove('d-none');
             return;
         }
 
-        const orders = JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
+        const user = Auth.getUser();
         const total = items.reduce((s, i) => s + (i.precio || 0), 0);
+
+
+        // Guardar temporalmente toda la información
+        this.pendingOrder = {
+            user,
+            items,
+            total,
+            nombre,
+            email,
+            telefono,
+            direccion,
+            fechaEvento,
+            notas
+        };
+
+        // Cerrar el modal de entrega
+        if (bootstrap && bootstrap.Modal){
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById("checkoutModal")
+            );
+
+            if(modal) modal.hide();
+        }
+
+        // Abrir el siguiente paso
+        this._showPaymentModal();
+
+    },
+
+    _injectPaymentModal() {
+
+        if(document.getElementById("paymentModal")) return;
+        const div = document.createElement("div");
+        div.innerHTML = `
+        <div class="modal fade" id="paymentModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content"
+                style="
+                border-radius:15px;
+                border:none;
+                ">
+
+                <div class="modal-header border-0">
+                    <h5 class="modal-title"
+                    style="
+                    font-family:'Playfair Display',serif;
+                    color:var(--brown);
+                    ">
+                    💳 Método de Pago
+                    </h5>
+
+                    <button 
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body px-4">
+
+
+                    <div class="mb-3">
+                        <h6 class="text-muted">
+                        Total a pagar
+                        </h6>
+
+                        <h3 
+                        id="payment-total"
+                        style="
+                        color:var(--brown);
+                        ">
+                        S/ 0.00
+                        </h3>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                        Selecciona una opción
+                        </label>
+
+                        <div class="form-check">
+
+                            <input 
+                            class="form-check-input"
+                            type="radio"
+                            name="metodoPago"
+                            value="tarjeta"
+                            checked>
+
+                            <label class="form-check-label">
+                            💳 Tarjeta de crédito/débito
+                            </label>
+
+                        </div>
+
+                        <div class="form-check mt-2">
+
+                            <input 
+                            class="form-check-input"
+                            type="radio"
+                            name="metodoPago"
+                            value="yape">
+                            <label class="form-check-label">
+                            📱 Yape
+                            </label>
+
+                        </div>
+
+                        <div class="form-check mt-2">
+                            <input 
+                            class="form-check-input"
+                            type="radio"
+                            name="metodoPago"
+                            value="plin">
+
+                            <label class="form-check-label">
+                            📱 Plin
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div id="payment-content">
+                    </div>
+
+                    <button 
+                    class="btn-primary-custom w-100 mt-4"
+                    onclick="Cart._confirmPayment()">
+
+                    Confirmar pago ✅
+                    </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+        document.body.appendChild(div.firstElementChild);
+
+        // Activar cambio entre métodos
+
+        this._initPaymentEvents();
+
+    },
+
+        _showPaymentModal() {
+        // 1. Crea el modal (si aún no existe)
+            this._injectPaymentModal();
+
+        // 2. Actualiza el total
+            document.getElementById("payment-total").textContent =
+                "S/ " + this.pendingOrder.total.toFixed(2);
+
+        // 3. Carga el contenido inicial (Tarjeta)
+            this._renderPaymentContent();
+
+        // 4. Muestra el modal
+            bootstrap.Modal
+            .getOrCreateInstance(document.getElementById("paymentModal"))
+            .show();
+        },
+    
+    _renderPaymentContent() {
+
+        const metodo = document.querySelector(
+            'input[name="metodoPago"]:checked'
+        )?.value || "tarjeta";
+
+        const contenedor = document.getElementById("payment-content");
+
+        if (!contenedor) return;
+        switch (metodo) {
+            case "tarjeta":
+                contenedor.innerHTML = `
+                <div class="mt-3">
+
+                    <label class="form-label">Número de tarjeta</label>
+
+                    <input
+                        id="card-number"
+                        class="form-control mb-3"
+                        type="text"
+                        maxlength="19"
+                        placeholder="1234 5678 9012 3456">
+
+                    <label class="form-label">Titular</label>
+
+                    <input
+                        id="card-name"
+                        class="form-control mb-3"
+                        type="text"
+                        placeholder="Nombre del titular">
+
+                    <div class="row">
+
+                        <div class="col">
+
+                            <label class="form-label">
+                                Vencimiento
+                            </label>
+
+                            <input
+                                id="card-date"
+                                class="form-control"
+                                placeholder="MM/AA">
+
+                        </div>
+
+                        <div class="col">
+                            <label class="form-label">
+                                CVV
+                            </label>
+
+                            <input
+                                id="card-cvv"
+                                class="form-control"
+                                maxlength="3"
+                                placeholder="123">
+
+                        </div>
+
+                    </div>
+
+                </div>
+                `;
+                break;
+                
+            case "yape":
+
+                contenedor.innerHTML = `
+
+                <div class="text-center mt-4">
+                <img
+                src="img/yapeQR.png"
+                style="width:220px;border-radius:12px;">
+
+
+                <h6 class="mt-3">
+                Escanea el QR con Yape
+                </h6>
+
+
+                <small class="text-muted">
+
+                Total:
+                <strong>
+                S/ ${this.pendingOrder.total.toFixed(2)}
+                </strong>
+
+                </small>
+
+
+                <div class="mt-3 text-start">
+
+                <label class="form-label">
+                Código de operación
+                </label>
+
+
+                <input
+                id="codigo-operacion"
+                class="form-control"
+                placeholder="Ejemplo: 123456789">
+
+                </div>
+            </div>
+            `;
+            break;
+
+            case "plin":
+
+                contenedor.innerHTML = `
+                <div class="text-center mt-4">
+                    <img
+                        src="img/plinQR.png"
+                        style="width:220px;border-radius:12px;">
+
+                    <h6 class="mt-3">
+                        Escanea el QR con Plin
+                    </h6>
+
+                    <small class="text-muted">
+
+                        Total:
+                        <strong>S/
+                        ${this.pendingOrder.total.toFixed(2)}
+                        </strong>
+
+                    </small>
+
+                    <div class="mt-3 text-start">
+
+                    <label class="form-label">
+                    Código de operación
+                    </label>
+
+
+                    <input
+                    id="codigo-operacion"
+                    class="form-control"
+                    placeholder="Ejemplo: 123456789">
+
+                    </div>
+
+                </div>
+                `;
+                break;
+
+        }
+
+
+    },
+
+    async _confirmPayment() {
+
+        const pedido = this.pendingOrder;
+        if (!pedido) {
+            this._toast("No existe un pedido pendiente.");
+            return;
+        }
+
+        const metodo = document.querySelector(
+            'input[name="metodoPago"]:checked'
+        )?.value;
+
+        if (!metodo) {
+            this._toast("Selecciona un método de pago.");
+            return;
+        }
+
+    // Validación básica para tarjeta
+        if (metodo === "tarjeta") {
+            const numero = document.getElementById("card-number")?.value.trim();
+            const titular = document.getElementById("card-name")?.value.trim();
+            const fecha = document.getElementById("card-date")?.value.trim();
+            const cvv = document.getElementById("card-cvv")?.value.trim();
+
+            if (!numero || !titular || !fecha || !cvv) {
+                this._toast("Completa todos los datos de la tarjeta.");
+                return;
+            }
+
+        }
+
+        if(metodo === "yape" || metodo === "plin"){
+            const codigo =
+            document.getElementById(
+            "codigo-operacion"
+            )?.value.trim();
+
+            if(!codigo){
+            this._toast(
+            "Ingresa el código de operación."
+            );
+            return;
+        }
+            pedido.codigoOperacion = codigo;
+        }
+
+    
+    // Aquí continúa el registro en Supabase
+    // 1. Crear el pedido en Supabase
+        const { data: pedidoCreado, error: errorPedido } = await supabaseClient
+            .from('pedidos')
+            .insert({
+                usuario_id: pedido.user.id,
+                fecha_evento: pedido.fechaEvento,
+                metodo_entrega: 'delivery',
+                direccion: pedido.direccion,
+                total: pedido.total,
+                estado: 'pendiente'
+            })
+            .select()
+            .single();
+
+            if (errorPedido) {
+            console.error('Error al crear pedido:', errorPedido);
+
+            this._toast(
+                'No se pudo registrar el pedido. Intenta nuevamente.'
+            );
+
+            return;
+        }
+
+        // 2. Crear el detalle de cada torta del pedido
+        const detalles = pedido.items.map(item => ({
+            pedido_id: pedidoCreado.id,
+            torta_id: item.tortaId,
+            cantidad: 1,
+            precio_unitario: item.precio,
+            estado_personalizacion: pedido.notas || null
+        }));
+
+        const { error: errorDetalle } = await supabaseClient
+            .from('detalle_torta')
+            .insert(detalles);
+
+        if (errorDetalle) {
+            console.error('Error al guardar detalle del pedido:', errorDetalle);
+            errorEl.textContent = 'El pedido se creó, pero hubo un error al guardar los detalles.';
+            errorEl.classList.remove('d-none');
+            return;
+        }
+
+        // Guardamos también localmente para el panel de admin (visual, rápido)
+        const orders = JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
         orders.push({
-            id: 'ord-' + Date.now(),
-            items: [...items],
-            total: total,
+            id: pedidoCreado.id,
+            items: [...pedido.items],
+            total: pedido.total,
             fecha: new Date().toISOString(),
-            cliente: nombre,
-            email: email,
-            telefono: telefono,
-            direccion: direccion,
-            fechaEvento: fechaEvento,
-            notas: notas
+            cliente: pedido.nombre,
+            email: pedido.email,
+            telefono: pedido.telefono,
+            direccion: pedido.direccion,
+            fechaEvento: pedido.fechaEvento,
+            metodoPago: metodo,
+            estado: "Pendiente",
+            notas: pedido.notas,
+            codigoOperacion: pedido.codigoOperacion || null,
         });
         localStorage.setItem(this._ordersKey, JSON.stringify(orders));
 
         if (bootstrap && bootstrap.Modal) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
+            const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
             if (modal) modal.hide();
         }
 
+        this.pendingOrder = null;
         this.clear();
         this.closePanel();
         this._showCelebration();
     },
+
+
+    _initPaymentEvents() {
+    document
+        .querySelectorAll(
+            'input[name="metodoPago"]'
+        )
+        .forEach(radio => {
+
+            radio.addEventListener("change", () => {
+                this._renderPaymentContent();
+
+            });
+
+        });
+
+
+    },
+
 
     getOrders() {
         return JSON.parse(localStorage.getItem(this._ordersKey) || '[]');
